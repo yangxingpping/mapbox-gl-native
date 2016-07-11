@@ -981,6 +981,27 @@ public class MapView extends FrameLayout {
         return icon;
     }
 
+    Icon loadIconForMarkerView(MarkerView marker) {
+        Icon icon = marker.getIcon();
+        int iconSize = mIcons.size() + 1;
+        if (icon == null) {
+            icon = IconFactory.getInstance(getContext()).defaultMarkerView();
+            marker.setIcon(icon);
+        }
+        Bitmap bitmap = icon.getBitmap();
+        mAverageIconHeight = mAverageIconHeight + (bitmap.getHeight() - mAverageIconHeight) / iconSize;
+        mAverageIconWidth = mAverageIconHeight + (bitmap.getWidth() - mAverageIconHeight) / iconSize;
+        if (!mIcons.contains(icon)) {
+            mIcons.add(icon);
+        } else {
+            Icon oldIcon = mIcons.get(mIcons.indexOf(icon));
+            if (!oldIcon.getBitmap().sameAs(icon.getBitmap())) {
+                throw new IconBitmapChangedException();
+            }
+        }
+        return icon;
+    }
+
     void loadIcon(Icon icon) {
         if (mDestroyed) {
             return;
@@ -1757,9 +1778,10 @@ public class MapView extends FrameLayout {
                     if (annotation instanceof Marker) {
                         if (annotation.getId() == newSelectedMarkerId) {
                             if (selectedMarkers.isEmpty() || !selectedMarkers.contains(annotation)) {
-                                // only handle click if no marker view is available
                                 if (!(annotation instanceof MarkerView)) {
                                     mMapboxMap.selectMarker((Marker) annotation);
+                                } else {
+                                    mMapboxMap.getMarkerViewManager().onClickMarkerView((MarkerView) annotation);
                                 }
                             }
                             break;

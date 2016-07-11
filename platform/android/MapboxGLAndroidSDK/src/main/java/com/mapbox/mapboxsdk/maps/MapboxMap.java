@@ -22,7 +22,6 @@ import com.mapbox.mapboxsdk.annotations.Annotation;
 import com.mapbox.mapboxsdk.annotations.BaseMarkerOptions;
 import com.mapbox.mapboxsdk.annotations.BaseMarkerViewOptions;
 import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.InfoWindow;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -1314,12 +1313,7 @@ public class MapboxMap {
 
     private MarkerView prepareViewMarker(BaseMarkerViewOptions markerViewOptions) {
         MarkerView marker = markerViewOptions.getMarker();
-
-        Icon icon = markerViewOptions.getIcon();
-        if (icon == null) {
-            icon = IconFactory.getInstance(mMapView.getContext()).defaultMarkerView();
-        }
-        marker.setIcon(icon);
+        mMapView.loadIconForMarkerView(marker);
         return marker;
     }
 
