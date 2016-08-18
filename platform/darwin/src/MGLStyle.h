@@ -36,7 +36,7 @@ static const NSInteger MGLStyleDefaultVersion = 9;
  */
 @interface MGLStyle : NSObject
 
-#pragma mark Default Style URLs
+#pragma mark Accessing Common Styles
 
 /**
  Returns the URL to version 8 of the
@@ -164,6 +164,8 @@ static const NSInteger MGLStyleDefaultVersion = 9;
  */
 + (NSURL *)satelliteStreetsStyleURLWithVersion:(NSInteger)version;
 
+#pragma mark Accessing Metadata About the Style
+
 /**
  The name of the style.
  
@@ -171,7 +173,30 @@ static const NSInteger MGLStyleDefaultVersion = 9;
  */
 @property (readonly, copy, nullable) NSString *name;
 
-#pragma mark Runtime Styling
+#pragma mark Managing Sources
+
+/**
+ Returns a source if any source with the given identifier was found.
+ 
+ @return source An instance of an `MGLSource` subclass.
+ */
+- (MGLSource *)sourceWithIdentifier:(NSString *)identifier;
+
+/**
+ Adds a new source to the map view.
+ 
+ @param source The source to add to the map view.
+ */
+- (void)addSource:(MGLSource *)source;
+
+/**
+ Removes a source from the map view.
+ 
+ @param source The source to remove.
+ */
+- (void)removeSource:(MGLSource *)source;
+
+#pragma mark Managing Style Layers
 
 /**
  Returns a layer that conforms to `MGLStyleLayer` if any layer with the given
@@ -180,14 +205,6 @@ static const NSInteger MGLStyleDefaultVersion = 9;
  @return layer A layer instance of the corresponding type.
  */
 - (nullable id <MGLStyleLayer>)layerWithIdentifier:(NSString *)identifier;
-
-
-/**
- Returns a source if any source with the given identifier was found.
- 
- @return source An instance of an `MGLSource` subclass.
- */
-- (MGLSource *)sourceWithIdentifier:(NSString *)identifier;
 
 /**
  Adds a new layer on top of existing layers.
@@ -214,19 +231,7 @@ static const NSInteger MGLStyleDefaultVersion = 9;
  */
 - (void)removeLayer:(id <MGLStyleLayer>)styleLayer;
 
-/**
- Adds a new source to the map view.
- 
- @param source The source to add to the map view.
- */
-- (void)addSource:(MGLSource *)source;
-
-/**
- Removes a source from the map view.
- 
- @param source The source to remove.
- */
-- (void)removeSource:(MGLSource *)source;
+#pragma mark Managing Style Classes
 
 /**
  Currently active style classes, represented as an array of string identifiers.

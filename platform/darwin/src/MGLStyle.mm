@@ -38,6 +38,8 @@
 
 @implementation MGLStyle
 
+#pragma mark Default style URLs
+
 static_assert(mbgl::util::default_styles::currentVersion == MGLStyleDefaultVersion, "mbgl::util::default_styles::currentVersion and MGLStyleDefaultVersion disagree.");
 
 /// @param name The style’s marketing name, written in lower camelCase.
@@ -88,6 +90,8 @@ static NSURL *MGLStyleURL_emerald;
     return MGLStyleURL_emerald;
 }
 
+#pragma mark Metadata
+
 - (NSString *)name {
     return @(self.mapView.mbglMap->getStyleName().c_str());
 }
@@ -97,23 +101,11 @@ static NSURL *MGLStyleURL_emerald;
     return self.mapView.mbglMap->getLayer(identifier.UTF8String);
 }
 
+#pragma mark Sources
+
 - (mbgl::style::Source *)mbglSourceWithIdentifier:(NSString *)identifier
 {
     return self.mapView.mbglMap->getSource(identifier.UTF8String);
-}
-
-- (id <MGLStyleLayer>)layerWithIdentifier:(NSString *)identifier
-{
-    auto layer = self.mapView.mbglMap->getLayer(identifier.UTF8String);
-    
-    Class clazz = [self classFromLayer:layer];
-    
-    id <MGLStyleLayer, MGLStyleLayer_Private> styleLayer = [[clazz alloc] init];
-    styleLayer.layerIdentifier = identifier;
-    styleLayer.layer = layer;
-    styleLayer.mapView = self.mapView;
-    
-    return styleLayer;
 }
 
 - (MGLSource *)sourceWithIdentifier:(NSString *)identifier
@@ -141,6 +133,37 @@ static NSURL *MGLStyleURL_emerald;
     
     [NSException raise:@"Source type not handled" format:@""];
     return Nil;
+}
+
+- (void)addSource:(MGLSource *)source
+{
+    self.mapView.mbglMap->addSource([source mbglSource]);
+}
+
+- (void)removeSource:(MGLSource *)source
+{
+    self.mapView.mbglMap->removeSource(source.sourceIdentifier.UTF8String);
+}
+
+#pragma mark Style layers
+
+- (mbgl::style::Layer *)mbglLayerWithIdentifier:(NSString *)identifier
+{
+    return self.mapView.mbglMap->getLayer(identifier.UTF8String);
+}
+
+- (id <MGLStyleLayer>)layerWithIdentifier:(NSString *)identifier
+{
+    auto layer = self.mapView.mbglMap->getLayer(identifier.UTF8String);
+    
+    Class clazz = [self classFromLayer:layer];
+    
+    id <MGLStyleLayer, MGLStyleLayer_Private> styleLayer = [[clazz alloc] init];
+    styleLayer.layerIdentifier = identifier;
+    styleLayer.layer = layer;
+    styleLayer.mapView = self.mapView;
+    
+    return styleLayer;
 }
 
 - (Class)classFromLayer:(mbgl::style::Layer *)layer
@@ -179,15 +202,7 @@ static NSURL *MGLStyleURL_emerald;
     self.mapView.mbglMap->addLayer(std::unique_ptr<mbgl::style::Layer>(styleLayer.layer), belowLayerId);
 }
 
-- (void)addSource:(MGLSource *)source
-{
-    self.mapView.mbglMap->addSource([source mbglSource]);
-}
-
-- (void)removeSource:(MGLSource *)source
-{
-    self.mapView.mbglMap->removeSource(source.sourceIdentifier.UTF8String);
-}
+#pragma mark Style classes
 
 - (NS_ARRAY_OF(NSString *) *)styleClasses
 {
@@ -240,6 +255,5 @@ static NSURL *MGLStyleURL_emerald;
         self.mapView.mbglMap->removeClass([styleClass UTF8String]);
     }
 }
-
 
 @end
