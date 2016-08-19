@@ -74,4 +74,10 @@
     return self.layer->getMinZoom();
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; layerIdentifier = %@; sourceIdentifier = %@; visible = %@>",
+            NSStringFromClass([self class]), (void *)self, self.layerIdentifier, self.sourceIdentifier, self.visible ? @"YES" : @"NO"];
+}
+
 @end
