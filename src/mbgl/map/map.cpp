@@ -774,10 +774,24 @@ void Map::removeSource(const std::string& sourceID) {
     impl->styleMutated = true;
     impl->style->removeSource(sourceID);
 }
+    
+std::vector<style::Layer*> Map::getLayers() {
+    return impl->style ? impl->style->getLayers() : std::vector<style::Layer*>();
+}
 
 style::Layer* Map::getLayer(const std::string& layerID) {
     impl->styleMutated = true;
     return impl->style ? impl->style->getLayer(layerID) : nullptr;
+}
+
+void Map::setLayers(std::vector<style::Layer*>& layers) {
+    impl->view.activate();
+
+    impl->style->setLayers(layers);
+    impl->updateFlags |= Update::Classes;
+    impl->asyncUpdate.send();
+
+    impl->view.deactivate();
 }
 
 void Map::addLayer(std::unique_ptr<Layer> layer, const optional<std::string>& before) {

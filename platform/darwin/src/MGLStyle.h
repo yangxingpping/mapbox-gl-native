@@ -198,6 +198,8 @@ static const NSInteger MGLStyleDefaultVersion = 9;
 
 #pragma mark Managing Style Layers
 
+@property (nonatomic, strong) NS_MUTABLE_ARRAY_OF(id <MGLStyleLayer>) *layers;
+
 /**
  Returns a layer that conforms to `MGLStyleLayer` if any layer with the given
  identifier was found.
