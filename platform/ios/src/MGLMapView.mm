@@ -327,9 +327,13 @@ public:
     return self;
 }
 
++ (NS_SET_OF(NSString *) *)keyPathsForValuesAffectingStyle {
+    return [NSSet setWithObject:@"styleURL"];
+}
+
 + (NS_SET_OF(NSString *) *)keyPathsForValuesAffectingStyleURL
 {
-    return [NSSet setWithObjects:@"styleURL__", nil];
+    return [NSSet setWithObjects:@"styleURL__", @"style", nil];
 }
 
 - (nonnull NSURL *)styleURL

@@ -522,6 +522,14 @@ public:
 
 #pragma mark Style
 
++ (NS_SET_OF(NSString *) *)keyPathsForValuesAffectingStyle {
+    return [NSSet setWithObject:@"styleURL"];
+}
+
++ (NS_SET_OF(NSString *) *)keyPathsForValuesAffectingStyleURL {
+    return [NSSet setWithObject:@"style"];
+}
+
 - (nonnull NSURL *)styleURL {
     NSString *styleURLString = @(_mbglMap->getStyleURL().c_str()).mgl_stringOrNilIfEmpty;
     return styleURLString ? [NSURL URLWithString:styleURLString] : [MGLStyle streetsStyleURLWithVersion:MGLStyleDefaultVersion];
