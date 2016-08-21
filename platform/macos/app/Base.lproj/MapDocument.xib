@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11191" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11198.2" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11198.2"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MapDocument">
@@ -12,6 +12,31 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <objectController objectClassName="MGLMapView" id="jxx-uM-ZTC" userLabel="Map View Object Controller">
+            <declaredKeys>
+                <string>style</string>
+            </declaredKeys>
+            <connections>
+                <outlet property="content" destination="q4d-kF-8Hi" id="Zpe-0y-eG3"/>
+            </connections>
+        </objectController>
+        <objectController objectClassName="MGLStyle" id="Xji-k6-iQ4" userLabel="Style Object Controller">
+            <declaredKeys>
+                <string>layers</string>
+            </declaredKeys>
+            <connections>
+                <binding destination="jxx-uM-ZTC" name="contentObject" keyPath="selection.style" id="60N-aU-tgJ"/>
+            </connections>
+        </objectController>
+        <arrayController objectClassName="MGLBaseStyleLayer" editable="NO" avoidsEmptySelection="NO" id="GXW-3J-Gff" userLabel="Style Layers Array Controller">
+            <declaredKeys>
+                <string>layerIdentifier</string>
+                <string>visible</string>
+            </declaredKeys>
+            <connections>
+                <binding destination="Xji-k6-iQ4" name="contentArray" keyPath="selection.layers" id="X25-Nb-Brf"/>
+            </connections>
+        </arrayController>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="MBXMapWindow" animationBehavior="default" id="cSv-fg-MAQ">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
@@ -22,19 +47,89 @@
                 <rect key="frame" x="0.0" y="0.0" width="512" height="480"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="q4d-kF-8Hi" customClass="MGLMapView">
+                    <splitView dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IPR-fm-vk8">
                         <rect key="frame" x="0.0" y="0.0" width="512" height="480"/>
-                        <connections>
-                            <outlet property="delegate" destination="-2" id="dh2-0H-jFZ"/>
-                            <outlet property="menu" destination="XbX-6a-Mgy" id="dSu-HR-Kq2"/>
-                        </connections>
-                    </customView>
+                        <subviews>
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="sMc-vT-RwH">
+                                <rect key="frame" x="0.0" y="0.0" width="130" height="480"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <clipView key="contentView" id="bSc-hK-bzQ">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="480"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" id="Mm4-6F-qEb">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="480"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <size key="intercellSpacing" width="3" height="2"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                            <tableColumns>
+                                                <tableColumn editable="NO" width="16" minWidth="16" maxWidth="1000" id="P3U-a3-c8q">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <imageCell key="dataCell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="JWq-c8-aB1"/>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                </tableColumn>
+                                                <tableColumn editable="NO" width="108" minWidth="40" maxWidth="1000" id="BwD-ww-7uw">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="6wl-F2-yK2">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="GXW-3J-Gff" name="value" keyPath="arrangedObjects.layerIdentifier" id="si3-ql-udJ"/>
+                                                        <binding destination="GXW-3J-Gff" name="fontItalic" keyPath="arrangedObjects.visible" id="6Wu-cz-WSI">
+                                                            <dictionary key="options">
+                                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                            </dictionary>
+                                                        </binding>
+                                                    </connections>
+                                                </tableColumn>
+                                            </tableColumns>
+                                        </tableView>
+                                    </subviews>
+                                </clipView>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="185" id="VQs-2Z-hmP"/>
+                                </constraints>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="NDx-rn-TLj">
+                                    <rect key="frame" x="0.0" y="464" width="184.5" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="0vt-rI-sHB">
+                                    <rect key="frame" x="114" y="480" width="16" height="0.0"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                            <customView fixedFrame="YES" id="q4d-kF-8Hi" customClass="MGLMapView">
+                                <rect key="frame" x="131" y="0.0" width="381" height="480"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="-2" id="dh2-0H-jFZ"/>
+                                    <outlet property="menu" destination="XbX-6a-Mgy" id="dSu-HR-Kq2"/>
+                                </connections>
+                            </customView>
+                        </subviews>
+                        <holdingPriorities>
+                            <real value="250"/>
+                            <real value="250"/>
+                        </holdingPriorities>
+                    </splitView>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="q4d-kF-8Hi" secondAttribute="bottom" id="L2t-Be-qWL"/>
-                    <constraint firstItem="q4d-kF-8Hi" firstAttribute="top" secondItem="TuG-C5-zLS" secondAttribute="top" id="T8A-o3-Bhq"/>
-                    <constraint firstItem="q4d-kF-8Hi" firstAttribute="leading" secondItem="TuG-C5-zLS" secondAttribute="leading" id="fGH-YW-Qd3"/>
-                    <constraint firstAttribute="trailing" secondItem="q4d-kF-8Hi" secondAttribute="trailing" id="yfG-iG-K4C"/>
+                    <constraint firstAttribute="trailing" secondItem="IPR-fm-vk8" secondAttribute="trailing" id="ABk-5R-Uzg"/>
+                    <constraint firstAttribute="bottom" secondItem="IPR-fm-vk8" secondAttribute="bottom" id="CHa-BK-6ld"/>
+                    <constraint firstItem="IPR-fm-vk8" firstAttribute="leading" secondItem="TuG-C5-zLS" secondAttribute="leading" id="hcR-y2-x3l"/>
+                    <constraint firstItem="IPR-fm-vk8" firstAttribute="top" secondItem="TuG-C5-zLS" secondAttribute="top" id="u78-BU-s5g"/>
                 </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="A3AC6577-4712-4628-813D-113498171A84" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="DTc-AP-Bah">
