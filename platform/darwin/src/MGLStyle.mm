@@ -155,11 +155,12 @@ static NSURL *MGLStyleURL_emerald;
 {
     auto layers = self.mapView.mbglMap->getLayers();
     NSMutableArray *styleLayers = [NSMutableArray arrayWithCapacity:layers.size()];
-    for (auto &layer : layers) {
-        Class clazz = [self classFromLayer:layer];
+    for (auto layer = layers.rbegin(); layer != layers.rend(); ++layer) {
+        Class clazz = [self classFromLayer:*layer];
+        NSAssert([clazz isSubclassOfClass:[MGLBaseStyleLayer class]], @"%@ is not a subclass of MGLBaseStyleLayer", NSStringFromClass(clazz));
         id <MGLStyleLayer, MGLStyleLayer_Private> styleLayer = [[clazz alloc] init];
-        styleLayer.layerIdentifier = @(layer->getID().c_str());
-        styleLayer.layer = layer;
+        styleLayer.layerIdentifier = @((*layer)->getID().c_str());
+        styleLayer.layer = *layer;
         styleLayer.mapView = self.mapView;
         [styleLayers addObject:styleLayer];
     }
@@ -169,7 +170,7 @@ static NSURL *MGLStyleURL_emerald;
 - (void)setLayers:(NS_MUTABLE_ARRAY_OF(id <MGLStyleLayer>) *)layers {
     std::vector<mbgl::style::Layer *> rawLayers;
     rawLayers.reserve(layers.count);
-    for (id <MGLStyleLayer, MGLStyleLayer_Private> layer in layers) {
+    for (id <MGLStyleLayer, MGLStyleLayer_Private> layer in layers.reverseObjectEnumerator) {
         rawLayers.push_back(layer.layer);
     }
     self.mapView.mbglMap->setLayers(rawLayers);
@@ -183,7 +184,7 @@ static NSURL *MGLStyleURL_emerald;
 - (id <MGLStyleLayer>)objectInLayersAtIndex:(NSUInteger)index
 {
     auto layers = self.mapView.mbglMap->getLayers();
-    auto layer = layers.at(index);
+    auto layer = layers.at(layers.size() - 1 - index);
     Class clazz = [self classFromLayer:layer];
     
     id <MGLStyleLayer, MGLStyleLayer_Private> styleLayer = [[clazz alloc] init];
@@ -197,7 +198,7 @@ static NSURL *MGLStyleURL_emerald;
 {
     auto layers = self.mapView.mbglMap->getLayers();
     NSUInteger i = 0;
-    for (auto layer = *(layers.begin() + inRange.location); i < inRange.length; ++layer, ++i) {
+    for (auto layer = *(layers.rbegin() + inRange.location); i < inRange.length; ++layer, ++i) {
         Class clazz = [self classFromLayer:layer];
         
         id <MGLStyleLayer, MGLStyleLayer_Private> styleLayer = [[clazz alloc] init];
@@ -215,7 +216,7 @@ static NSURL *MGLStyleURL_emerald;
     if (index == layers.size()) {
         [self addLayer:styleLayer];
     } else {
-        auto layerAbove = layers.at(index);
+        auto layerAbove = layers.at(layers.size() - 1 - index);
         self.mapView.mbglMap->addLayer(std::unique_ptr<mbgl::style::Layer>(styleLayer.layer), layerAbove->getID());
     }
 }
@@ -223,7 +224,7 @@ static NSURL *MGLStyleURL_emerald;
 - (void)removeObjectFromLayersAtIndex:(NSUInteger)index
 {
     auto layers = self.mapView.mbglMap->getLayers();
-    auto layer = layers.at(index);
+    auto layer = layers.at(layers.size() - 1 - index);
     self.mapView.mbglMap->removeLayer(layer->getID());
 }
 
