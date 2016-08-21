@@ -151,7 +151,7 @@ static NSURL *MGLStyleURL_emerald;
 
 #pragma mark Style layers
 
-- (NSMutableArray<id<MGLStyleLayer>> *)layers
+- (NS_MUTABLE_ARRAY_OF(id <MGLStyleLayer>) *)layers
 {
     auto layers = self.mapView.mbglMap->getLayers();
     NSMutableArray *styleLayers = [NSMutableArray arrayWithCapacity:layers.size()];
@@ -166,7 +166,7 @@ static NSURL *MGLStyleURL_emerald;
     return styleLayers;
 }
 
-- (void)setLayers:(NSMutableArray<id<MGLStyleLayer>> *)layers {
+- (void)setLayers:(NS_MUTABLE_ARRAY_OF(id <MGLStyleLayer>) *)layers {
     std::vector<mbgl::style::Layer *> rawLayers;
     rawLayers.reserve(layers.count);
     for (id <MGLStyleLayer, MGLStyleLayer_Private> layer in layers) {
