@@ -212,22 +212,36 @@ std::unordered_map<std::string, std::vector<Feature>> Source::Impl::queryRendere
         return result;
     }
 
-    LineString<double> queryGeometry;
-
-    for (const auto& p : parameters.geometry) {
-        queryGeometry.push_back(TileCoordinate::fromScreenCoordinate(
-            parameters.transformState, 0, { p.x, parameters.transformState.getHeight() - p.y }).p);
-    }
-
-    if (queryGeometry.empty()) {
-        return result;
-    }
-
-    mapbox::geometry::box<double> box = mapbox::geometry::envelope(queryGeometry);
-
     for (const auto& tilePtr : renderTiles) {
         const RenderTile& tile = tilePtr.second;
 
+        double scale = std::pow(2, parameters.transformState.getZoom() - tile.tile.id.overscaledZ);
+        mbgl::ScreenBox scaledScreenBox = parameters.box;
+        
+        scaledScreenBox.max.x *= scale;
+        scaledScreenBox.max.y *= scale;
+        
+        LineString<double> geometry = {
+            scaledScreenBox.min,
+            { scaledScreenBox.max.x, scaledScreenBox.min.y },
+            scaledScreenBox.max,
+            { scaledScreenBox.min.x, scaledScreenBox.max.y },
+            scaledScreenBox.min
+        };
+        
+        LineString<double> queryGeometry;
+        
+        for (const auto& p : geometry) {
+            queryGeometry.push_back(TileCoordinate::fromScreenCoordinate(
+                parameters.transformState, 0, { p.x, parameters.transformState.getHeight() - p.y }).p);
+        }
+        
+        mapbox::geometry::box<double> box = mapbox::geometry::envelope(queryGeometry);
+        
+        if (queryGeometry.empty()) {
+            return result;
+        }
+        
         Point<int16_t> tileSpaceBoundsMin = coordinateToTilePoint(tile.id, box.min);
         Point<int16_t> tileSpaceBoundsMax = coordinateToTilePoint(tile.id, box.max);
 

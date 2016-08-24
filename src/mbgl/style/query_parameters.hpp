@@ -12,7 +12,7 @@ namespace style {
 
 class QueryParameters {
 public:
-    const ScreenLineString& geometry;
+    const ScreenBox& box;
     const TransformState& transformState;
     const optional<std::vector<std::string>>& layerIDs;
 };
