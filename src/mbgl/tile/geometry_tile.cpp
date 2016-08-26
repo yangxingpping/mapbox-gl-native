@@ -199,6 +199,7 @@ void GeometryTile::redoPlacement() {
 
 void GeometryTile::queryRenderedFeatures(
     std::unordered_map<std::string, std::vector<Feature>>& result,
+    const GeometryCoordinates& scaledQueryGeometry,
     const GeometryCoordinates& queryGeometry,
     const TransformState& transformState,
     const optional<std::vector<std::string>>& layerIDs) {
@@ -206,6 +207,7 @@ void GeometryTile::queryRenderedFeatures(
     if (!featureIndex || !data) return;
 
     featureIndex->query(result,
+                        { scaledQueryGeometry },
                         { queryGeometry },
                         transformState.getAngle(),
                         util::tileSize * id.overscaleFactor(),

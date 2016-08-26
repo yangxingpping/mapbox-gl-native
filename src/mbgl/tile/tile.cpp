@@ -29,6 +29,7 @@ void Tile::dumpDebugLogs() const {
 
 void Tile::queryRenderedFeatures(
         std::unordered_map<std::string, std::vector<Feature>>&,
+        const GeometryCoordinates& scaledQueryGeometry,
         const GeometryCoordinates&,
         const TransformState&,
         const optional<std::vector<std::string>>&) {}

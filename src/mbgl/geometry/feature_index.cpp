@@ -52,6 +52,7 @@ static bool topDownSymbols(const IndexedSubfeature& a, const IndexedSubfeature& 
 
 void FeatureIndex::query(
         std::unordered_map<std::string, std::vector<Feature>>& result,
+        const GeometryCollection& scaledQueryGeometry,
         const GeometryCollection& queryGeometry,
         const float bearing,
         const double tileSize,
@@ -61,10 +62,10 @@ void FeatureIndex::query(
         const CanonicalTileID& tileID,
         const style::Style& style) const {
 
-    mapbox::geometry::box<int16_t> box = mapbox::geometry::envelope(queryGeometry);
 
     const float pixelsToTileUnits = util::EXTENT / tileSize / scale;
     const int16_t additionalRadius = std::min<int16_t>(util::EXTENT, std::ceil(style.getQueryRadius() * pixelsToTileUnits));
+    mapbox::geometry::box<int16_t> box = mapbox::geometry::envelope(queryGeometry);
     std::vector<IndexedSubfeature> features = grid.query({ box.min - additionalRadius, box.max + additionalRadius });
 
     std::sort(features.begin(), features.end(), topDown);
@@ -78,12 +79,14 @@ void FeatureIndex::query(
         addFeature(result, indexedFeature, queryGeometry, filterLayerIDs, geometryTileData, tileID, style, bearing, pixelsToTileUnits);
     }
 
+    mapbox::geometry::box<int16_t> scaledBox = mapbox::geometry::envelope(scaledQueryGeometry);
+    
     // query symbol features
     assert(collisionTile);
-    std::vector<IndexedSubfeature> symbolFeatures = collisionTile->queryRenderedSymbols(box, scale);
+    std::vector<IndexedSubfeature> symbolFeatures = collisionTile->queryRenderedSymbols(scaledBox, scale);
     std::sort(symbolFeatures.begin(), symbolFeatures.end(), topDownSymbols);
     for (const auto& symbolFeature : symbolFeatures) {
-        addFeature(result, symbolFeature, queryGeometry, filterLayerIDs, geometryTileData, tileID, style, bearing, pixelsToTileUnits);
+        addFeature(result, symbolFeature, scaledQueryGeometry, filterLayerIDs, geometryTileData, tileID, style, bearing, pixelsToTileUnits);
     }
 }
 

@@ -221,13 +221,32 @@ std::unordered_map<std::string, std::vector<Feature>> Source::Impl::queryRendere
         scaledScreenBox.max.x *= scale;
         scaledScreenBox.max.y *= scale;
         
-        LineString<double> geometry = {
+        LineString<double> scaledGeometry = {
             scaledScreenBox.min,
             { scaledScreenBox.max.x, scaledScreenBox.min.y },
             scaledScreenBox.max,
             { scaledScreenBox.min.x, scaledScreenBox.max.y },
             scaledScreenBox.min
         };
+        
+        LineString<double> geometry = {
+            parameters.box.min,
+            { parameters.box.max.x, parameters.box.min.y },
+            parameters.box.max,
+            { parameters.box.min.x, parameters.box.max.y },
+            parameters.box.min
+        };
+        
+        LineString<double> scaledQueryGeometry;
+        
+        for (const auto& p : scaledGeometry) {
+            scaledQueryGeometry.push_back(TileCoordinate::fromScreenCoordinate(
+                parameters.transformState, 0, { p.x, parameters.transformState.getHeight() - p.y }).p);
+        }
+        
+        if (scaledQueryGeometry.empty()) {
+            return result;
+        }
         
         LineString<double> queryGeometry;
         
@@ -236,25 +255,24 @@ std::unordered_map<std::string, std::vector<Feature>> Source::Impl::queryRendere
                 parameters.transformState, 0, { p.x, parameters.transformState.getHeight() - p.y }).p);
         }
         
-        mapbox::geometry::box<double> box = mapbox::geometry::envelope(queryGeometry);
-        
-        if (queryGeometry.empty()) {
-            return result;
-        }
-        
+        mapbox::geometry::box<double> box = mapbox::geometry::envelope(scaledQueryGeometry);
         Point<int16_t> tileSpaceBoundsMin = coordinateToTilePoint(tile.id, box.min);
         Point<int16_t> tileSpaceBoundsMax = coordinateToTilePoint(tile.id, box.max);
-
         if (tileSpaceBoundsMin.x >= util::EXTENT || tileSpaceBoundsMin.y >= util::EXTENT ||
             tileSpaceBoundsMax.x < 0 || tileSpaceBoundsMax.y < 0) continue;
 
+        GeometryCoordinates tileSpaceQueryGeometryScaled;
+        for (const auto& c : scaledQueryGeometry) {
+            tileSpaceQueryGeometryScaled.push_back(coordinateToTilePoint(tile.id, c));
+        }
+        
         GeometryCoordinates tileSpaceQueryGeometry;
-
         for (const auto& c : queryGeometry) {
             tileSpaceQueryGeometry.push_back(coordinateToTilePoint(tile.id, c));
         }
-
+        
         tile.tile.queryRenderedFeatures(result,
+                                        tileSpaceQueryGeometryScaled,
                                         tileSpaceQueryGeometry,
                                         parameters.transformState,
                                         parameters.layerIDs);

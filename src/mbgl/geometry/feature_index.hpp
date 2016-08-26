@@ -35,6 +35,7 @@ public:
 
     void query(
             std::unordered_map<std::string, std::vector<Feature>>& result,
+            const GeometryCollection& scaledQueryGeometry,
             const GeometryCollection& queryGeometry,
             const float bearing,
             const double tileSize,
