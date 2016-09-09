@@ -59,7 +59,7 @@ static const NSInteger MGLStyleDefaultVersion = 10;
  is specified explicitly.
  
  @param version The style’s latest released version. As of publication, the
-    current version is `9`.
+    current version is `10`.
  */
 + (NSURL *)streetsStyleURLWithVersion:(NSInteger)version;
 
@@ -78,7 +78,7 @@ static const NSInteger MGLStyleDefaultVersion = 10;
  Outdoors is a general-purpose style tailored to outdoor activities.
  
  @param version The style’s latest released version. As of publication, the
-    current version is `9`.
+    current version is `10`.
  */
 + (NSURL *)outdoorsStyleURLWithVersion:(NSInteger)version;
 
@@ -97,7 +97,7 @@ static const NSInteger MGLStyleDefaultVersion = 10;
  Light is a subtle, light-colored backdrop for data visualizations.
  
  @param version The style’s latest released version. As of publication, the
-    current version is `9`.
+    current version is `10`.
  */
 + (NSURL *)lightStyleURLWithVersion:(NSInteger)version;
 
@@ -116,7 +116,7 @@ static const NSInteger MGLStyleDefaultVersion = 10;
  Dark is a subtle, dark-colored backdrop for data visualizations.
  
  @param version The style’s latest released version. As of publication, the
-    current version is `9`.
+    current version is `10`.
  */
 + (NSURL *)darkStyleURLWithVersion:(NSInteger)version;
 
@@ -135,7 +135,7 @@ static const NSInteger MGLStyleDefaultVersion = 10;
  Satellite is high-resolution satellite and aerial imagery.
  
  @param version The style’s latest released version. As of publication, the
-    current version is `9`.
+    current version is `10`.
  */
 + (NSURL *)satelliteStyleURLWithVersion:(NSInteger)version;
 
@@ -160,7 +160,7 @@ static const NSInteger MGLStyleDefaultVersion = 10;
  Streets.
  
  @param version The style’s latest released version. As of publication, the
-    current version is `9`.
+    current version is `10`.
  */
 + (NSURL *)satelliteStreetsStyleURLWithVersion:(NSInteger)version;
 
