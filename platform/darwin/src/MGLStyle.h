@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
     the constant itself. Such details may change significantly from version to
     version.
  */
-static const NSInteger MGLStyleDefaultVersion = 9;
+static const NSInteger MGLStyleDefaultVersion = 10;
 
 /**
  A collection of convenience methods for creating style URLs of default styles

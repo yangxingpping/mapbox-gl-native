@@ -77,7 +77,7 @@ ApplicationWindow {
 
                     style: MapboxStyle {
                         id: styleStreets
-                        url: "mapbox://styles/mapbox/streets-v9"
+                        url: "mapbox://styles/mapbox/streets-v10"
                     }
 
                     center: QtPositioning.coordinate(60.170448, 24.942046) // Helsinki
@@ -164,7 +164,7 @@ ApplicationWindow {
 
                     style: MapboxStyle {
                         id: styleSatellite
-                        url: "mapbox://styles/mapbox/satellite-streets-v9"
+                        url: "mapbox://styles/mapbox/satellite-streets-v10"
                     }
 
                     center: mapFront.center
@@ -287,14 +287,14 @@ ApplicationWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: "Light style"
-                onClicked: { styleStreets.url = "mapbox://styles/mapbox/light-v9" }
+                onClicked: { styleStreets.url = "mapbox://styles/mapbox/light-v10" }
             }
 
             Button {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: "Dark style"
-                onClicked: { styleStreets.url = "mapbox://styles/mapbox/dark-v9" }
+                onClicked: { styleStreets.url = "mapbox://styles/mapbox/dark-v10" }
             }
 
             CheckBox {

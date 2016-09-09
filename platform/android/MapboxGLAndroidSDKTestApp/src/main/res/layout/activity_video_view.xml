@@ -31,7 +31,7 @@
         mapbox:center_latitude="34.4021"
         mapbox:center_longitude="-119.7081"
         mapbox:logo_gravity="top"
-        mapbox:style_url="mapbox://styles/mapbox/streets-v9"
+        mapbox:style_url="mapbox://styles/mapbox/streets-v10"
         mapbox:zoom="13" />
 
 </RelativeLayout>
