@@ -4,6 +4,155 @@
 #import "MGLStyleAttributeValue_Private.h"
 #import "MGLStyleAttributeFunction_Private.h"
 
+@implementation MGLStyleValue
+
++ (instancetype)valueWithRawValue:(id)rawValue {
+    return [MGLStyleConstantValue valueWithRawValue:rawValue];
+}
+
++ (instancetype)valueWithBase:(CGFloat)base stops:(NSDictionary *)stops {
+    return [MGLStyleFunction functionWithBase:base stops:stops];
+}
+
++ (instancetype)valueWithStops:(NSDictionary *)stops {
+    return [MGLStyleFunction functionWithStops:stops];
+}
+
+- (id)rawValueAtZoomLevel:(double)zoomLevel {
+    return nil;
+}
+
+@end
+
+@implementation MGLStyleConstantValue
+
++ (instancetype)valueWithRawValue:(id)rawValue {
+    return [[self alloc] initWithRawValue:rawValue];
+}
+
+- (instancetype)initWithRawValue:(id)rawValue {
+    if (self = [super init]) {
+        _rawValue = rawValue;
+    }
+    return self;
+}
+
+- (id)rawValueAtZoomLevel:(double)zoomLevel {
+    return self.rawValue;
+}
+
+@end
+
+@implementation MGLStyleFunction
+
++ (instancetype)functionWithBase:(CGFloat)base stops:(NSDictionary *)stops {
+    return [[self alloc] initWithBase:base stops:stops];
+}
+
++ (instancetype)functionWithStops:(NSDictionary *)stops {
+    return [[self alloc] initWithBase:1 stops:stops];
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _base = 1;
+    }
+    return self;
+}
+
+- (instancetype)initWithBase:(CGFloat)base stops:(NSDictionary *)stops {
+    if (self = [self init]) {
+        _base = base;
+        _stops = stops;
+    }
+    return self;
+}
+
+- (id)rawValueAtZoomLevel:(double)zoomLevel {
+#warning rawValueAtZoomLevel for zoom function
+    return nil;
+}
+
+@end
+
+namespace mbgl {
+    namespace style {
+        NSNumber *MGLRawStyleValueFromMBGLValue(bool mbglStopValue) {
+            return @(mbglStopValue);
+        }
+        
+        NSNumber *MGLRawStyleValueFromMBGLValue(float mbglStopValue) {
+            return @(mbglStopValue);
+        }
+        
+        NSString *MGLRawStyleValueFromMBGLValue(std::string mbglStopValue) {
+            return @(mbglStopValue.c_str());
+        }
+        
+        // Offsets
+        NSValue *MGLRawStyleValueFromMBGLValue(std::array<float, 2> mbglStopValue) {
+            return [NSValue mgl_valueWithOffsetArray:mbglStopValue];
+        }
+        
+        // Padding
+        NSValue *MGLRawStyleValueFromMBGLValue(std::array<float, 4> mbglStopValue) {
+            return [NSValue mgl_valueWithPaddingArray:mbglStopValue];
+        }
+        
+        // Enumerations
+        NSValue *MGLRawStyleValueFromMBGLValue(uint8_t mbglStopValue) {
+            NSUInteger rawValue = static_cast<NSUInteger>(mbglStopValue);
+            return [NSValue value:&rawValue withObjCType:@encode(NSUInteger)];
+        }
+        
+        MGLColor *MGLRawStyleValueFromMBGLValue(Color mbglStopValue) {
+            return [MGLColor mbgl_colorWithColor:mbglStopValue];
+        }
+        
+        template <typename T, typename U>
+        U *MGLRawStyleValueFromMBGLValue(std::vector<T> mbglStopValue) {
+            NSMutableArray *array = [NSMutableArray arrayWithCapacity:mbglStopValue.size()];
+            for (const auto &mbglElement: mbglStopValue) {
+                [array addObject:MGLRawStyleValueFromMBGLValue(mbglElement)];
+            }
+            return array;
+        }
+        
+        template <typename T, typename U>
+        MGLStyleConstantValue<U> *MGLStyleConstantValueFromMBGLValue(T &mbglValue) {
+            U *rawValue = MGLRawStyleValueFromMBGLValue<T, U>(mbglValue);
+            return [MGLStyleConstantValue<U> valueWithRawValue:rawValue];
+        }
+        
+        template <typename T, typename U>
+        MGLStyleFunction<U> *MGLStyleFunctionFromMBGLFunction(Function<T> &mbglFunction) {
+            const auto &mbglStops = mbglFunction.getStops();
+            NSMutableDictionary *stops = [NSMutableDictionary dictionaryWithCapacity:mbglStops.size()];
+            for (const auto &mbglStop : mbglStops) {
+                U *rawValue = MGLRawStyleValueFromMBGLValue(mbglStop.second);
+                stops[@(mbglStop.first)] = [MGLStyleValue valueWithRawValue:rawValue];
+            }
+            return [MGLStyleFunction<U> functionWithBase:mbglFunction.getBase() stops:stops];
+        }
+        
+        template <typename T, typename U>
+        MGLStyleValue<U> *MGLStyleValueFromMBGLValue(PropertyValue<T> &mbglValue) {
+            if (mbglValue.isConstant()) {
+                return MGLStyleConstantValueFromMBGLValue<T, U>(mbglValue.asConstant());
+            } else if (mbglValue.isFunction()) {
+                return MGLStyleFunctionFromMBGLFunction<T, U>(mbglValue.asFunction());
+            } else {
+                return nil;
+            }
+        }
+    }
+}
+
+
+
+
+
+
 @interface MGLStyleAttributeFunction() <MGLStyleAttributeValue_Private>
 @end
 
