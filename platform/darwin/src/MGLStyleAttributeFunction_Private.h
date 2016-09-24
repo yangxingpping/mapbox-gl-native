@@ -4,6 +4,8 @@
 #include <mbgl/style/function.hpp>
 #include <mbgl/style/property_value.hpp>
 
+#include <mapbox/variant.hpp>
+
 #define MGLSetEnumProperty(name, Name, MBGLType, ObjCType) \
     if (name.isFunction) { \
         NSAssert([name isKindOfClass:[MGLStyleAttributeFunction class]], @"" #name @" should be a function"); \
@@ -70,4 +72,11 @@
 
 + (instancetype)functionWithEnumProperyValue:(mbgl::style::Function<bool>)property type:(const char *)type;
 
-@end;
+@end
+
+namespace mbgl {
+    namespace style {
+        template <typename T, typename U>
+        MGLStyleValue<U> *MGLStyleValueFromMBGLValue(PropertyValue<T> &mbglValue);
+    }
+}

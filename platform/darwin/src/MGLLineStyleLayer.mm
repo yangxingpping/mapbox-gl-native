@@ -68,8 +68,9 @@
     MGLSetEnumProperty(lineJoin, LineJoin, LineJoinType, MGLLineStyleLayerLineJoin);
 }
 
-- (id <MGLStyleAttributeValue>)lineJoin {
-    MGLGetEnumProperty(LineJoin, LineJoinType, MGLLineStyleLayerLineJoin);
+- (MGLStyleValue <NSValue *> *)lineJoin {
+    // MGLLineStyleLayerLineJoin
+    return mbgl::style::MGLStyleValueFromMBGLValue<mbgl::style::LineJoinType, NSValue>(self.layer->getLineJoin() ?: self.layer->getDefaultLineJoin());
 }
 
 - (void)setLineMiterLimit:(id <MGLStyleAttributeValue, MGLStyleAttributeValue_Private>)lineMiterLimit {

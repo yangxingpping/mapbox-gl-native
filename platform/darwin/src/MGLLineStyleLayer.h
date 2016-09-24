@@ -90,7 +90,7 @@ typedef NS_ENUM(NSUInteger, MGLLineStyleLayerLineTranslateAnchor) {
  
  The default value of this property is an `NSValue` object containing `MGLLineStyleLayerLineJoinMiter`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> lineJoin;
+@property (nonatomic, null_resettable) MGLStyleValue <NSValue *> *lineJoin;
 
 /**
  Used to automatically convert miter joins to bevel joins for sharp angles.
