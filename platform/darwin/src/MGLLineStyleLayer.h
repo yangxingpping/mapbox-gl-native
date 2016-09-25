@@ -3,6 +3,7 @@
 
 #import "MGLStyleAttributeValue.h"
 #import "MGLVectorStyleLayer.h"
+#import "MGLStyleAttributeFunction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
