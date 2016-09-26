@@ -9,7 +9,8 @@ LineSDFShader::LineSDFShader(gl::Context& context, Defines defines)
     : Shader(shaders::linesdfpattern::name,
              shaders::linesdfpattern::vertex,
              shaders::linesdfpattern::fragment,
-             context, defines) {
+             context, defines),
+      uniformsState(LineSDFUniforms::state(*this)) {
 }
 
 } // namespace mbgl

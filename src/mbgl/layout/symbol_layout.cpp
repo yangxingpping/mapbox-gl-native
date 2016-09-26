@@ -449,15 +449,14 @@ void SymbolLayout::addSymbols(Buffer &buffer, const SymbolQuads &symbols, float 
 
         const int glyph_vertex_length = 4;
 
-        if (buffer.groups.empty() || buffer.groups.back().vertexLength + glyph_vertex_length > 65535) {
-            // Move to a new group because the old one can't hold the geometry.
-            buffer.groups.emplace_back();
+        if (buffer.segments.empty() || buffer.segments.back().vertexLength + glyph_vertex_length > 65535) {
+            buffer.segments.emplace_back(buffer.vertices.size(), buffer.triangles.size());
         }
 
         // We're generating triangle fans, so we always start with the first
         // coordinate in this polygon.
-        auto& group = buffer.groups.back();
-        size_t index = group.vertexLength;
+        auto& segment = buffer.segments.back();
+        size_t index = segment.vertexLength;
 
         // Encode angle of glyph
         uint8_t glyphAngle = std::round((symbol.glyphAngle / (M_PI * 2)) * 256);
@@ -480,8 +479,8 @@ void SymbolLayout::addSymbols(Buffer &buffer, const SymbolQuads &symbols, float 
                                       static_cast<uint16_t>(index + 2),
                                       static_cast<uint16_t>(index + 3));
 
-        group.vertexLength += glyph_vertex_length;
-        group.indexLength += 2;
+        segment.vertexLength += glyph_vertex_length;
+        segment.primitiveLength += 2;
     }
 }
 
@@ -515,10 +514,6 @@ void SymbolLayout::addToDebugBuffers(CollisionTile& collisionTile, SymbolBucket&
                 const float placementZoom= util::max(0.0f, util::min(25.0f, static_cast<float>(zoom + log(box.placementScale) / log(2))));
 
                 auto& collisionBox = bucket.collisionBox;
-                if (collisionBox.groups.empty()) {
-                    // Move to a new group because the old one can't hold the geometry.
-                    collisionBox.groups.emplace_back();
-                }
 
                 collisionBox.vertices.emplace_back(anchor.x, anchor.y, tl.x, tl.y, maxZoom, placementZoom);
                 collisionBox.vertices.emplace_back(anchor.x, anchor.y, tr.x, tr.y, maxZoom, placementZoom);
@@ -528,9 +523,6 @@ void SymbolLayout::addToDebugBuffers(CollisionTile& collisionTile, SymbolBucket&
                 collisionBox.vertices.emplace_back(anchor.x, anchor.y, bl.x, bl.y, maxZoom, placementZoom);
                 collisionBox.vertices.emplace_back(anchor.x, anchor.y, bl.x, bl.y, maxZoom, placementZoom);
                 collisionBox.vertices.emplace_back(anchor.x, anchor.y, tl.x, tl.y, maxZoom, placementZoom);
-
-                auto& group= collisionBox.groups.back();
-                group.vertexLength += 8;
             }
         }
     }

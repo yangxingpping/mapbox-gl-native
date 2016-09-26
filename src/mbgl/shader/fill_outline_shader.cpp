@@ -9,7 +9,8 @@ FillOutlineShader::FillOutlineShader(gl::Context& context, Defines defines)
     : Shader(shaders::outline::name,
              shaders::outline::vertex,
              shaders::outline::fragment,
-             context, defines) {
+             context, defines),
+      uniformsState(FillColorUniforms::state(*this)) {
 }
 
 } // namespace mbgl

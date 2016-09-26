@@ -80,12 +80,6 @@ bool Painter::needsAnimation() const {
     return frameHistory.needsAnimation(util::DEFAULT_FADE_DURATION);
 }
 
-void Painter::setClipping(const ClipID& clip) {
-    const GLint ref = (GLint)clip.reference.to_ulong();
-    const GLuint mask = (GLuint)clip.mask.to_ulong();
-    context.stencilFunc = { gl::StencilTestFunction::Equal, ref, mask };
-}
-
 void Painter::cleanup() {
     context.performCleanup();
 }
@@ -112,7 +106,6 @@ void Painter::render(const Style& style, const FrameData& frame_, SpriteAtlas& a
     RenderData renderData = style.getRenderData(frame.debugOptions);
     const std::vector<RenderItem>& order = renderData.order;
     const std::unordered_set<Source*>& sources = renderData.sources;
-    const Color& background = renderData.backgroundColor;
 
     // Update the default matrices to the current viewport dimensions.
     state.getProjMatrix(projMatrix);
@@ -150,26 +143,11 @@ void Painter::render(const Style& style, const FrameData& frame_, SpriteAtlas& a
         MBGL_DEBUG_GROUP("clear");
         context.bindFramebuffer.reset();
         context.viewport.reset();
-        context.stencilFunc.reset();
-        context.stencilTest = true;
-        context.stencilMask = 0xFF;
-        context.depthTest = false;
-        context.depthMask = true;
-        context.colorMask = { true, true, true, true };
-
-        if (paintMode() == PaintMode::Overdraw) {
-            context.blend = true;
-            context.blendFunc = { gl::BlendSourceFactor::ConstantColor,
-                                  gl::BlendDestinationFactor::One };
-            const float overdraw = 1.0f / 8.0f;
-            context.blendColor = { overdraw, overdraw, overdraw, 0.0f };
-            context.clearColor = Color::black();
-        } else {
-            context.clearColor = background;
-        }
-        context.clearStencil = 0;
-        context.clearDepth = 1;
-        MBGL_CHECK_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        context.clear(paintMode() == PaintMode::Overdraw
+                        ? Color::black()
+                        : renderData.backgroundColor,
+                      1.0f,
+                      0);
     }
 
     // - CLIPPING MASKS ----------------------------------------------------------------------------
@@ -183,15 +161,13 @@ void Painter::render(const Style& style, const FrameData& frame_, SpriteAtlas& a
             source->baseImpl->startRender(generator, projMatrix, state);
         }
 
-        drawClippingMasks(parameters, generator.getStencils());
-    }
+        MBGL_DEBUG_GROUP("clipping masks");
 
-#if not MBGL_USE_GLES2 and not defined(NDEBUG)
-    if (frame.debugOptions & MapDebugOptions::StencilClip) {
-        renderClipMasks();
-        return;
+        for (const auto& stencil : generator.getStencils()) {
+            MBGL_DEBUG_GROUP(std::string{ "mask: " } + util::toString(stencil.first));
+            renderClippingMask(stencil.first, stencil.second);
+        }
     }
-#endif
 
     // Actually render the layers
     if (debug::renderTree) { Log::Info(Event::Render, "{"); indent++; }
@@ -229,25 +205,6 @@ void Painter::render(const Style& style, const FrameData& frame_, SpriteAtlas& a
         }
     }
 
-#if not MBGL_USE_GLES2 and not defined(NDEBUG)
-    if (frame.debugOptions & MapDebugOptions::DepthBuffer) {
-        renderDepthBuffer();
-    }
-#endif
-
-    // TODO: Find a better way to unbind VAOs after we're done with them without introducing
-    // unnecessary bind(0)/bind(N) sequences.
-    {
-        MBGL_DEBUG_GROUP("cleanup");
-
-        context.activeTexture = 1;
-        context.texture[1] = 0;
-        context.activeTexture = 0;
-        context.texture[0] = 0;
-
-        context.vertexArrayObject = 0;
-    }
-
     if (frame.contextMode == GLContextMode::Shared) {
         context.setDirtyState();
     }
@@ -276,39 +233,18 @@ void Painter::renderPass(PaintParameters& parameters,
         if (!layer.baseImpl->hasRenderPass(pass))
             continue;
 
-        if (paintMode() == PaintMode::Overdraw) {
-            context.blend = true;
-        } else if (pass == RenderPass::Translucent) {
-            context.blend = true;
-            context.blendFunc = { gl::BlendSourceFactor::One,
-                                  gl::BlendDestinationFactor::OneMinusSrcAlpha };
-        } else {
-            context.blend = false;
-        }
-
-        context.colorMask = { true, true, true, true };
-        context.stencilMask = 0x0;
-
         if (layer.is<BackgroundLayer>()) {
             MBGL_DEBUG_GROUP("background");
             renderBackground(parameters, *layer.as<BackgroundLayer>());
         } else if (layer.is<CustomLayer>()) {
             MBGL_DEBUG_GROUP(layer.baseImpl->id + " - custom");
-            context.vertexArrayObject = 0;
-            context.depthFunc = gl::DepthTestFunction::LessEqual;
-            context.depthTest = true;
-            context.depthMask = false;
-            context.stencilTest = false;
-            setDepthSublayer(0);
+            context.resetState();
             layer.as<CustomLayer>()->impl->render(state);
             context.setDirtyState();
             context.bindFramebuffer.reset();
             context.viewport.reset();
         } else {
             MBGL_DEBUG_GROUP(layer.baseImpl->id + " - " + util::toString(item.tile->id));
-            if (item.bucket->needsClipping()) {
-                setClipping(item.tile->clip);
-            }
             item.bucket->render(*this, parameters, layer, *item.tile);
         }
     }
@@ -318,10 +254,46 @@ void Painter::renderPass(PaintParameters& parameters,
     }
 }
 
-void Painter::setDepthSublayer(int n) {
+mat4 Painter::matrixForTile(const UnwrappedTileID& tileID) {
+    mat4 matrix;
+    state.matrixFor(matrix, tileID);
+    matrix::multiply(matrix, projMatrix, matrix);
+    return matrix;
+}
+
+Range<float> Painter::depthRangeForSublayer(int n) const {
     float nearDepth = ((1 + currentLayer) * numSublayers + n) * depthEpsilon;
     float farDepth = nearDepth + depthRangeSize;
-    context.depthRange = { nearDepth, farDepth };
+    return { nearDepth, farDepth };
+}
+
+gl::Stencil Painter::stencilForClipping(const ClipID& id) const {
+    return gl::Stencil {
+        gl::Stencil::Equal { static_cast<uint32_t>(id.mask.to_ulong()) },
+        static_cast<int32_t>(id.reference.to_ulong()),
+        0,
+        gl::Stencil::Keep,
+        gl::Stencil::Keep,
+        gl::Stencil::Replace
+    };
+}
+
+gl::Color Painter::colorForRenderPass() const {
+    if (paintMode() == PaintMode::Overdraw) {
+        const float overdraw = 1.0f / 8.0f;
+        return gl::Color {
+            gl::Color::Add {
+                gl::Color::ConstantColor,
+                gl::Color::One
+            },
+            Color { overdraw, overdraw, overdraw, 0.0f },
+            gl::Color::Mask { true, true, true, true }
+        };
+    } else if (pass == RenderPass::Translucent) {
+        return gl::Color::alphaBlended();
+    } else {
+        return gl::Color::unblended();
+    }
 }
 
 } // namespace mbgl

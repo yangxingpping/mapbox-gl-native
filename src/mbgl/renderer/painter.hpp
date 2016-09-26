@@ -8,7 +8,6 @@
 #include <mbgl/renderer/render_item.hpp>
 #include <mbgl/renderer/bucket.hpp>
 
-#include <mbgl/gl/vao.hpp>
 #include <mbgl/gl/context.hpp>
 #include <mbgl/shader/fill_vertex.hpp>
 #include <mbgl/shader/raster_vertex.hpp>
@@ -77,20 +76,8 @@ public:
 
     void cleanup();
 
-    // Renders debug information for a tile.
+    void renderClippingMask(const UnwrappedTileID&, const ClipID&);
     void renderTileDebug(const RenderTile&);
-
-    // Renders the red debug frame around a tile, visualizing its perimeter.
-    void renderDebugFrame(const mat4 &matrix);
-
-#ifndef NDEBUG
-    // Renders tile clip boundaries, using stencil buffer to calculate fill color.
-    void renderClipMasks();
-    // Renders the depth buffer.
-    void renderDepthBuffer();
-#endif
-
-    void renderDebugText(Tile&, const mat4&);
     void renderFill(PaintParameters&, FillBucket&, const style::FillLayer&, const RenderTile&);
     void renderLine(PaintParameters&, LineBucket&, const style::LineLayer&, const RenderTile&);
     void renderCircle(PaintParameters&, CircleBucket&, const style::CircleLayer&, const RenderTile&);
@@ -101,8 +88,6 @@ public:
     float saturationFactor(float saturation);
     float contrastFactor(float contrast);
     std::array<float, 3> spinWeights(float spin_value);
-
-    void drawClippingMasks(PaintParameters&, const std::map<UnwrappedTileID, ClipID>&);
 
     bool needsAnimation() const;
 
@@ -115,31 +100,10 @@ private:
                     Iterator it, Iterator end,
                     uint32_t i, int8_t increment);
 
-    void setClipping(const ClipID&);
-
-    void renderSDF(SymbolBucket&,
-                   const RenderTile&,
-                   float scaleDivisor,
-                   std::array<float, 2> texsize,
-                   SymbolSDFShader& sdfShader,
-                   void (SymbolBucket::*drawSDF)(SymbolSDFShader&, gl::Context&, PaintMode),
-
-                   // Layout
-                   style::AlignmentType rotationAlignment,
-                   style::AlignmentType pitchAlignment,
-                   float layoutSize,
-
-                   // Paint
-                   float opacity,
-                   Color color,
-                   Color haloColor,
-                   float haloWidth,
-                   float haloBlur,
-                   std::array<float, 2> translate,
-                   style::TranslateAnchorType translateAnchor,
-                   float paintSize);
-
-    void setDepthSublayer(int n);
+    mat4 matrixForTile(const UnwrappedTileID&);
+    Range<float> depthRangeForSublayer(int n) const;
+    gl::Stencil stencilForClipping(const ClipID&) const;
+    gl::Color colorForRenderPass() const;
 
 #ifndef NDEBUG
     PaintMode paintMode() const {
@@ -191,8 +155,6 @@ private:
     gl::VertexBuffer<FillVertex> tileTriangleVertexBuffer;
     gl::VertexBuffer<FillVertex> tileLineStripVertexBuffer;
     gl::VertexBuffer<RasterVertex> rasterVertexBuffer;
-
-    gl::VertexArrayObject tileBorderArray;
 };
 
 } // namespace mbgl

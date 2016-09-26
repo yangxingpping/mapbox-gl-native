@@ -9,7 +9,8 @@ LinePatternShader::LinePatternShader(gl::Context& context, Defines defines)
     : Shader(shaders::linepattern::name,
              shaders::linepattern::vertex,
              shaders::linepattern::fragment,
-             context, defines) {
+             context, defines),
+      uniformsState(LinePatternUniforms::state(*this)) {
 }
 
 } // namespace mbgl

@@ -94,7 +94,7 @@ StencilFunc::Type StencilFunc::Get() {
     MBGL_CHECK_ERROR(glGetIntegerv(GL_STENCIL_FUNC, &func));
     MBGL_CHECK_ERROR(glGetIntegerv(GL_STENCIL_REF, &ref));
     MBGL_CHECK_ERROR(glGetIntegerv(GL_STENCIL_VALUE_MASK, &mask));
-    return { static_cast<StencilTestFunction>(func), ref, static_cast<StencilMaskValue>(mask) };
+    return { static_cast<uint32_t>(func), ref, static_cast<uint32_t>(mask) };
 }
 
 const constexpr StencilTest::Type StencilTest::Default;
@@ -122,17 +122,17 @@ StencilOp::Type StencilOp::Get() {
     MBGL_CHECK_ERROR(glGetIntegerv(GL_STENCIL_FAIL, &sfail));
     MBGL_CHECK_ERROR(glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, &dpfail));
     MBGL_CHECK_ERROR(glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, &dppass));
-    return { static_cast<StencilTestOperation>(sfail), static_cast<StencilTestOperation>(dpfail),
-             static_cast<StencilTestOperation>(dppass) };
+    return { static_cast<Stencil::Op>(sfail), static_cast<Stencil::Op>(dpfail),
+             static_cast<Stencil::Op>(dppass) };
 }
 
 const constexpr DepthRange::Type DepthRange::Default;
 
 void DepthRange::Set(const Type& value) {
 #if MBGL_USE_GLES2
-    MBGL_CHECK_ERROR(glDepthRangef(value.near, value.far));
+    MBGL_CHECK_ERROR(glDepthRangef(value.min, value.max));
 #else
-    MBGL_CHECK_ERROR(glDepthRange(value.near, value.far));
+    MBGL_CHECK_ERROR(glDepthRange(value.min, value.max));
 #endif
 }
 
@@ -189,8 +189,8 @@ BlendFunc::Type BlendFunc::Get() {
     GLint sfactor, dfactor;
     MBGL_CHECK_ERROR(glGetIntegerv(GL_BLEND_SRC_ALPHA, &sfactor));
     MBGL_CHECK_ERROR(glGetIntegerv(GL_BLEND_DST_ALPHA, &dfactor));
-    return { static_cast<BlendSourceFactor>(sfactor),
-             static_cast<BlendDestinationFactor>(dfactor) };
+    return { static_cast<Color::BlendFactor>(sfactor),
+             static_cast<Color::BlendFactor>(dfactor) };
 }
 
 const constexpr BlendColor::Type BlendColor::Default;
@@ -215,6 +215,18 @@ Program::Type Program::Get() {
     GLint program;
     MBGL_CHECK_ERROR(glGetIntegerv(GL_CURRENT_PROGRAM, &program));
     return program;
+}
+
+const constexpr PointSize::Type PointSize::Default;
+
+void PointSize::Set(const Type& value) {
+    MBGL_CHECK_ERROR(glPointSize(value));
+}
+
+PointSize::Type PointSize::Get() {
+    GLfloat pointSize;
+    MBGL_CHECK_ERROR(glGetFloatv(GL_POINT_SIZE, &pointSize));
+    return pointSize;
 }
 
 const constexpr LineWidth::Type LineWidth::Default;

@@ -1,7 +1,11 @@
 #pragma once
 
 #include <mbgl/gl/types.hpp>
+#include <mbgl/gl/depth.hpp>
+#include <mbgl/gl/stencil.hpp>
+#include <mbgl/gl/color.hpp>
 #include <mbgl/util/color.hpp>
+#include <mbgl/util/range.hpp>
 
 namespace mbgl {
 namespace gl {
@@ -15,21 +19,21 @@ struct ClearDepth {
 };
 
 struct ClearColor {
-    using Type = Color;
+    using Type = mbgl::Color;
     static const constexpr Type Default = { 0, 0, 0, 0 };
     static void Set(const Type&);
     static Type Get();
 };
 
 struct ClearStencil {
-    using Type = StencilValue;
+    using Type = int32_t;
     static const constexpr Type Default = 0;
     static void Set(const Type&);
     static Type Get();
 };
 
 struct StencilMask {
-    using Type = StencilMaskValue;
+    using Type = uint32_t;
     static const constexpr Type Default = ~0u;
     static void Set(const Type&);
     static Type Get();
@@ -43,28 +47,19 @@ struct DepthMask {
 };
 
 struct ColorMask {
-    struct Type {
-        bool r;
-        bool g;
-        bool b;
-        bool a;
-    };
+    using Type = Color::Mask;
     static const constexpr Type Default = { true, true, true, true };
     static void Set(const Type&);
     static Type Get();
 };
 
-constexpr bool operator!=(const ColorMask::Type& a, const ColorMask::Type& b) {
-    return a.r != b.r || a.g != b.g || a.b != b.b || a.a != b.a;
-}
-
 struct StencilFunc {
     struct Type {
-        StencilTestFunction func;
-        StencilValue ref;
-        StencilMaskValue mask;
+        uint32_t func;
+        int32_t ref;
+        uint32_t mask;
     };
-    static const constexpr Type Default = { StencilTestFunction::Always, 0, ~0u };
+    static const constexpr Type Default = { Stencil::Always::func, 0, ~0u };
     static void Set(const Type&);
     static Type Get();
 };
@@ -82,12 +77,11 @@ struct StencilTest {
 
 struct StencilOp {
     struct Type {
-        StencilTestOperation sfail;
-        StencilTestOperation dpfail;
-        StencilTestOperation dppass;
+        Stencil::Op sfail;
+        Stencil::Op dpfail;
+        Stencil::Op dppass;
     };
-    static const constexpr Type Default = { StencilTestOperation::Keep, StencilTestOperation::Keep,
-                                            StencilTestOperation::Keep };
+    static const constexpr Type Default = { Stencil::Keep, Stencil::Keep, Stencil::Keep };
     static void Set(const Type&);
     static Type Get();
 };
@@ -97,18 +91,11 @@ constexpr bool operator!=(const StencilOp::Type& a, const StencilOp::Type& b) {
 }
 
 struct DepthRange {
-    struct Type {
-        float near;
-        float far;
-    };
+    using Type = Range<float>;
     static const constexpr Type Default = { 0, 1 };
     static void Set(const Type&);
     static Type Get();
 };
-
-constexpr bool operator!=(const DepthRange::Type& a, const DepthRange::Type& b) {
-    return a.near != b.near || a.far != b.far;
-}
 
 struct DepthTest {
     using Type = bool;
@@ -118,8 +105,8 @@ struct DepthTest {
 };
 
 struct DepthFunc {
-    using Type = DepthTestFunction;
-    static const constexpr Type Default = DepthTestFunction::Less;
+    using Type = Depth::Function;
+    static const constexpr Type Default = Depth::Less;
     static void Set(const Type&);
     static Type Get();
 };
@@ -133,10 +120,10 @@ struct Blend {
 
 struct BlendFunc {
     struct Type {
-        BlendSourceFactor sfactor;
-        BlendDestinationFactor dfactor;
+        Color::BlendFactor sfactor;
+        Color::BlendFactor dfactor;
     };
-    static const constexpr Type Default = { BlendSourceFactor::One, BlendDestinationFactor::Zero };
+    static const constexpr Type Default = { Color::One, Color::Zero };
     static void Set(const Type&);
     static Type Get();
 };
@@ -146,7 +133,7 @@ constexpr bool operator!=(const BlendFunc::Type& a, const BlendFunc::Type& b) {
 }
 
 struct BlendColor {
-    using Type = Color;
+    using Type = mbgl::Color;
     static const constexpr Type Default = { 0, 0, 0, 0 };
     static void Set(const Type&);
     static Type Get();
@@ -155,6 +142,13 @@ struct BlendColor {
 struct Program {
     using Type = gl::ProgramID;
     static const constexpr Type Default = 0;
+    static void Set(const Type&);
+    static Type Get();
+};
+
+struct PointSize {
+    using Type = float;
+    static const constexpr Type Default = 1;
     static void Set(const Type&);
     static Type Get();
 };
