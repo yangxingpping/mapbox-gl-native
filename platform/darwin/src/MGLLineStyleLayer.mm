@@ -70,7 +70,8 @@
 
 - (MGLStyleValue <NSValue *> *)lineJoin {
     // MGLLineStyleLayerLineJoin
-    return MGLStyleValueFromMBGLValue<mbgl::style::LineJoinType, NSValue *>(self.layer->getLineJoin() ?: self.layer->getDefaultLineJoin());
+    auto propertyValue = self.layer->getLineJoin() ?: self.layer->getDefaultLineJoin();
+    return MGLStyleValueFromMBGLValue<mbgl::style::LineJoinType, NSValue *>(propertyValue);
 }
 
 - (void)setLineMiterLimit:(id <MGLStyleAttributeValue, MGLStyleAttributeValue_Private>)lineMiterLimit {
