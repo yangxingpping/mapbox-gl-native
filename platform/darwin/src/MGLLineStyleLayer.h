@@ -100,7 +100,7 @@ typedef NS_ENUM(NSUInteger, MGLLineStyleLayerLineTranslateAnchor) {
  
  This property is only applied to the style if `lineJoin` is set to an `NSValue` object containing `MGLLineStyleLayerLineJoinMiter`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> lineMiterLimit;
+@property (nonatomic, null_resettable) MGLStyleValue <NSNumber *> *lineMiterLimit;
 
 /**
  Used to automatically convert round joins to miter joins for shallow angles.

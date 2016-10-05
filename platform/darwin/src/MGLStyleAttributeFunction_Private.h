@@ -74,4 +74,7 @@
 @end
 
 template <typename T, typename U>
+mbgl::style::PropertyValue<U> MBGLValueFromMGLStyleValue(MGLStyleValue<T> *value);
+
+template <typename T, typename U>
 MGLStyleValue<U> *MGLStyleValueFromMBGLValue(mbgl::style::PropertyValue<T> &mbglValue);
