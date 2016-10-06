@@ -1,5 +1,5 @@
 #include <mbgl/map/map.hpp>
-#include <mbgl/platform/default/headless_display.hpp>
+#include <mbgl/platform/default/headless_backend.hpp>
 #include <mbgl/platform/default/headless_view.hpp>
 #include <mbgl/sprite/sprite_image.hpp>
 #include <mbgl/test/stub_file_source.hpp>
@@ -25,10 +25,10 @@ public:
     }
 
     util::RunLoop loop;
-    std::shared_ptr<HeadlessDisplay> display { std::make_shared<HeadlessDisplay>() };
-    HeadlessView view { display, 1 };
+    HeadlessBackend backend;
+    HeadlessView view;
     StubFileSource fileSource;
-    Map map { view, fileSource, MapMode::Still };
+    Map map { backend, view, view.getPixelRatio(), fileSource, MapMode::Still };
 };
 
 } // end namespace

@@ -2,7 +2,7 @@
 
 #include <mbgl/benchmark/util.hpp>
 #include <mbgl/map/map.hpp>
-#include <mbgl/platform/default/headless_display.hpp>
+#include <mbgl/platform/default/headless_backend.hpp>
 #include <mbgl/platform/default/headless_view.hpp>
 #include <mbgl/sprite/sprite_image.hpp>
 #include <mbgl/storage/default_file_source.hpp>
@@ -34,10 +34,10 @@ public:
     }
 
     util::RunLoop loop;
-    std::shared_ptr<HeadlessDisplay> display{ std::make_shared<HeadlessDisplay>() };
-    HeadlessView view{ display, 1 };
+    HeadlessBackend backend;
+    HeadlessView view;
     DefaultFileSource fileSource{ "benchmark/fixtures/api/cache.db", "." };
-    Map map{ view, fileSource, MapMode::Still };
+    Map map{ backend, view, view.getPixelRatio(), fileSource, MapMode::Still };
     ScreenBox box{{ 0, 0 }, { 1000, 1000 }};
 };
 

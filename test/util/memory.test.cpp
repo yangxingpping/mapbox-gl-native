@@ -2,7 +2,7 @@
 #include <mbgl/test/util.hpp>
 
 #include <mbgl/map/map.hpp>
-#include <mbgl/platform/default/headless_display.hpp>
+#include <mbgl/platform/default/headless_backend.hpp>
 #include <mbgl/platform/default/headless_view.hpp>
 #include <mbgl/util/io.hpp>
 #include <mbgl/util/run_loop.hpp>
@@ -55,8 +55,8 @@ public:
     }
 
     util::RunLoop runLoop;
-    std::shared_ptr<HeadlessDisplay> display { std::make_shared<mbgl::HeadlessDisplay>() };
-    HeadlessView view { display, 2 };
+    HeadlessBackend backend;
+    HeadlessView view{ 2 };
     StubFileSource fileSource;
 
 private:
@@ -91,7 +91,7 @@ private:
 TEST(Memory, Vector) {
     MemoryTest test;
 
-    Map map(test.view, test.fileSource, MapMode::Still);
+    Map map(test.backend, test.view, test.view.getPixelRatio(), test.fileSource, MapMode::Still);
     map.setZoom(16); // more map features
     map.setStyleURL("mapbox://streets");
 
@@ -101,7 +101,7 @@ TEST(Memory, Vector) {
 TEST(Memory, Raster) {
     MemoryTest test;
 
-    Map map(test.view, test.fileSource, MapMode::Still);
+    Map map(test.backend, test.view, test.view.getPixelRatio(), test.fileSource, MapMode::Still);
     map.setStyleURL("mapbox://satellite");
 
     test::render(map);
@@ -128,7 +128,7 @@ TEST(Memory, Footprint) {
 
     // Warm up buffers and cache.
     for (unsigned i = 0; i < 10; ++i) {
-        Map map(test.view, test.fileSource, MapMode::Still);
+        Map map(test.backend, test.view, test.view.getPixelRatio(), test.fileSource, MapMode::Still);
         renderMap(&map, "mapbox://streets");
         renderMap(&map, "mapbox://satellite");
     };
@@ -142,7 +142,8 @@ TEST(Memory, Footprint) {
 
     long vectorInitialRSS = getRSS();
     for (unsigned i = 0; i < runs; ++i) {
-        auto vector = std::make_unique<Map>(test.view, test.fileSource, MapMode::Still);
+        auto vector = std::make_unique<Map>(test.backend, test.view, test.view.getPixelRatio(), test.fileSource,
+                                            MapMode::Still);
         renderMap(vector.get(), "mapbox://streets");
         maps.push_back(std::move(vector));
     };
@@ -151,7 +152,8 @@ TEST(Memory, Footprint) {
 
     long rasterInitialRSS = getRSS();
     for (unsigned i = 0; i < runs; ++i) {
-        auto raster = std::make_unique<Map>(test.view, test.fileSource, MapMode::Still);
+        auto raster = std::make_unique<Map>(test.backend, test.view, test.view.getPixelRatio(), test.fileSource,
+                                            MapMode::Still);
         renderMap(raster.get(), "mapbox://satellite");
         maps.push_back(std::move(raster));
     };

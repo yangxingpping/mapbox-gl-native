@@ -3,6 +3,7 @@
 #include "qmapboxgl.hpp"
 
 #include <mbgl/map/map.hpp>
+#include <mbgl/map/backend.hpp>
 #include <mbgl/map/view.hpp>
 #include <mbgl/storage/default_file_source.hpp>
 #include <mbgl/util/geo.hpp>
@@ -10,7 +11,7 @@
 #include <QObject>
 #include <QSize>
 
-class QMapboxGLPrivate : public QObject, public mbgl::View
+class QMapboxGLPrivate : public QObject, public mbgl::View, public mbgl::Backend
 {
     Q_OBJECT
 
@@ -19,7 +20,8 @@ public:
     virtual ~QMapboxGLPrivate();
 
     // mbgl::View implementation.
-    float getPixelRatio() const final;
+    float getPixelRatio() const;
+    void bind() final;
     std::array<uint16_t, 2> getSize() const final;
     std::array<uint16_t, 2> getFramebufferSize() const final;
 

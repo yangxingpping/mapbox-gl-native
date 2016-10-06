@@ -812,7 +812,7 @@ QMapboxGLPrivate::QMapboxGLPrivate(QMapboxGL *q, const QMapboxGLSettings &settin
         settings.assetPath().toStdString(),
         settings.cacheDatabaseMaximumSize()))
     , mapObj(std::make_unique<mbgl::Map>(
-        *this, *fileSourceObj,
+        *this, *this, getPixelRatio(), *fileSourceObj,
         static_cast<mbgl::MapMode>(settings.mapMode()),
         static_cast<mbgl::GLContextMode>(settings.contextMode()),
         static_cast<mbgl::ConstrainMode>(settings.constrainMode()),
@@ -842,6 +842,11 @@ float QMapboxGLPrivate::getPixelRatio() const
     static const float pixelRatio = 1.0;
 #endif
     return pixelRatio;
+}
+
+void QMapboxGLPrivate::bind()
+{
+    MBGL_CHECK_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 std::array<uint16_t, 2> QMapboxGLPrivate::getSize() const

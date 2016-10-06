@@ -3,8 +3,8 @@
 #include <mbgl/util/io.hpp>
 #include <mbgl/util/run_loop.hpp>
 
+#include <mbgl/platform/default/headless_backend.hpp>
 #include <mbgl/platform/default/headless_view.hpp>
-#include <mbgl/platform/default/headless_display.hpp>
 #include <mbgl/storage/default_file_source.hpp>
 
 #pragma GCC diagnostic push
@@ -83,8 +83,9 @@ int main(int argc, char *argv[]) {
         fileSource.setAccessToken(std::string(token));
     }
 
+    HeadlessBackend backend;
     HeadlessView view(pixelRatio, width, height);
-    Map map(view, fileSource, MapMode::Still);
+    Map map(backend, view, view.getPixelRatio(), fileSource, MapMode::Still);
 
     map.setStyleJSON(style);
     map.setClasses(classes);

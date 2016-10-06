@@ -21,6 +21,7 @@ namespace mbgl {
 
 class FileSource;
 class View;
+class Backend;
 class SpriteImage;
 struct CameraOptions;
 struct AnimationOptions;
@@ -32,7 +33,10 @@ class Layer;
 
 class Map : private util::noncopyable {
 public:
-    explicit Map(View&, FileSource&,
+    explicit Map(Backend&,
+                 View&,
+                 float pixelRatio,
+                 FileSource&,
                  MapMode mapMode = MapMode::Continuous,
                  GLContextMode contextMode = GLContextMode::Unique,
                  ConstrainMode constrainMode = ConstrainMode::HeightOnly,

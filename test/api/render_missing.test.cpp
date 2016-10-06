@@ -2,8 +2,8 @@
 #include <mbgl/test/fixture_log_observer.hpp>
 
 #include <mbgl/map/map.hpp>
+#include <mbgl/platform/default/headless_backend.hpp>
 #include <mbgl/platform/default/headless_view.hpp>
-#include <mbgl/platform/default/headless_display.hpp>
 #include <mbgl/storage/default_file_source.hpp>
 #include <mbgl/util/image.hpp>
 #include <mbgl/util/io.hpp>
@@ -24,8 +24,8 @@ TEST(API, TEST_REQUIRES_SERVER(RenderMissingTile)) {
 
     const auto style = util::read_file("test/fixtures/api/water_missing_tiles.json");
 
-    auto display = std::make_shared<mbgl::HeadlessDisplay>();
-    HeadlessView view(display, 1, 256, 512);
+    HeadlessBackend backend;
+    HeadlessView view(1, 256, 512);
 #ifdef MBGL_ASSET_ZIP
     // Regenerate with `cd test/fixtures/api/ && zip -r assets.zip assets/`
     DefaultFileSource fileSource(":memory:", "test/fixtures/api/assets.zip");
@@ -35,7 +35,7 @@ TEST(API, TEST_REQUIRES_SERVER(RenderMissingTile)) {
 
     Log::setObserver(std::make_unique<FixtureLogObserver>());
 
-    Map map(view, fileSource, MapMode::Still);
+    Map map(backend, view, view.getPixelRatio(), fileSource, MapMode::Still);
 
     std::string message;
 

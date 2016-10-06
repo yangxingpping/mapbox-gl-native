@@ -3,7 +3,8 @@
 #include <mbgl/test/fixture_log_observer.hpp>
 
 #include <mbgl/map/map.hpp>
-#include <mbgl/platform/default/headless_display.hpp>
+#include <mbgl/platform/default/headless_backend.hpp>
+#include <mbgl/platform/default/headless_view.hpp>
 #include <mbgl/storage/online_file_source.hpp>
 #include <mbgl/util/exception.hpp>
 #include <mbgl/util/run_loop.hpp>
@@ -18,12 +19,13 @@ TEST(API, RenderWithoutCallback) {
 
     util::RunLoop loop;
 
-    auto display = std::make_shared<mbgl::HeadlessDisplay>();
-    HeadlessView view(display, 1);
+    HeadlessBackend backend;
+    HeadlessView view;
     view.resize(128, 512);
     StubFileSource fileSource;
 
-    std::unique_ptr<Map> map = std::make_unique<Map>(view, fileSource, MapMode::Still);
+    std::unique_ptr<Map> map =
+        std::make_unique<Map>(backend, view, view.getPixelRatio(), fileSource, MapMode::Still);
     map->renderStill(nullptr);
 
     // Force Map thread to join.
@@ -42,12 +44,12 @@ TEST(API, RenderWithoutCallback) {
 TEST(API, RenderWithoutStyle) {
     util::RunLoop loop;
 
-    auto display = std::make_shared<mbgl::HeadlessDisplay>();
-    HeadlessView view(display, 1);
+    HeadlessBackend backend;
+    HeadlessView view;
     view.resize(128, 512);
     StubFileSource fileSource;
 
-    Map map(view, fileSource, MapMode::Still);
+    Map map(backend, view, view.getPixelRatio(), fileSource, MapMode::Still);
 
     std::exception_ptr error;
     map.renderStill([&](std::exception_ptr error_, PremultipliedImage&&) {

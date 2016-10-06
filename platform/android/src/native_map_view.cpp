@@ -55,10 +55,8 @@ void log_gl_string(GLenum name, const char *label) {
     }
 }
 
-NativeMapView::NativeMapView(JNIEnv *env_, jobject obj_, float pixelRatio_, int availableProcessors_, size_t totalMemory_)
-    : mbgl::View(*this),
-      env(env_),
-      pixelRatio(pixelRatio_),
+NativeMapView::NativeMapView(JNIEnv *env_, jobject obj_, float pixelRatio, int availableProcessors_, size_t totalMemory_)
+    : env(env_),
       availableProcessors(availableProcessors_),
       totalMemory(totalMemory_) {
     mbgl::Log::Debug(mbgl::Event::Android, "NativeMapView::NativeMapView");
@@ -81,7 +79,7 @@ NativeMapView::NativeMapView(JNIEnv *env_, jobject obj_, float pixelRatio_, int 
         mbgl::android::cachePath + "/mbgl-offline.db",
         mbgl::android::apkPath);
 
-    map = std::make_unique<mbgl::Map>(*this, *fileSource, MapMode::Continuous);
+    map = std::make_unique<mbgl::Map>(*this, *this, pixelRatio, *fileSource, MapMode::Continuous);
 
     float zoomFactor   = map->getMaxZoom() - map->getMinZoom() + 1;
     float cpuFactor    = availableProcessors;
@@ -113,8 +111,8 @@ NativeMapView::~NativeMapView() {
     vm = nullptr;
 }
 
-float NativeMapView::getPixelRatio() const {
-    return pixelRatio;
+void NativeMapView::bind() {
+    MBGL_CHECK_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 std::array<uint16_t, 2> NativeMapView::getSize() const {

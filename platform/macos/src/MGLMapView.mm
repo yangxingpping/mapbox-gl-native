@@ -24,6 +24,7 @@
 #import <mbgl/platform/darwin/reachability.h>
 #import <mbgl/gl/extension.hpp>
 #import <mbgl/gl/gl.hpp>
+#import <mbgl/map/backend.hpp>
 #import <mbgl/sprite/sprite_image.hpp>
 #import <mbgl/storage/default_file_source.hpp>
 #import <mbgl/storage/network_status.hpp>
@@ -245,7 +246,7 @@ public:
     _isTargetingInterfaceBuilder = NSProcessInfo.processInfo.mgl_isInterfaceBuilderDesignablesAgent;
     
     // Set up cross-platform controllers and resources.
-    _mbglView = new MGLMapViewImpl(self, [NSScreen mainScreen].backingScaleFactor);
+    _mbglView = new MGLMapViewImpl(self);
     
     // Delete the pre-offline ambient cache at
     // ~/Library/Caches/com.mapbox.sdk.ios/cache.db.
@@ -260,7 +261,7 @@ public:
     [[NSFileManager defaultManager] removeItemAtURL:legacyCacheURL error:NULL];
     
     mbgl::DefaultFileSource *mbglFileSource = [MGLOfflineStorage sharedOfflineStorage].mbglFileSource;
-    _mbglMap = new mbgl::Map(*_mbglView, *mbglFileSource, mbgl::MapMode::Continuous, mbgl::GLContextMode::Unique, mbgl::ConstrainMode::None, mbgl::ViewportMode::Default);
+    _mbglMap = new mbgl::Map(*_mbglView, *_mbglView, [NSScreen mainScreen].backingScaleFactor, *mbglFileSource, mbgl::MapMode::Continuous, mbgl::GLContextMode::Unique, mbgl::ConstrainMode::None, mbgl::ViewportMode::Default);
     [self validateTileCacheSize];
     
     // Install the OpenGL layer. Interface Builder’s synchronous drawing means
@@ -736,6 +737,8 @@ public:
 
             return reinterpret_cast<mbgl::gl::glProc>(symbol);
         });
+
+        _mbglView->updateFramebufferBinding();
 
         _mbglMap->render();
 
@@ -2518,14 +2521,10 @@ public:
 }
 
 /// Adapter responsible for bridging calls from mbgl to MGLMapView and Cocoa.
-class MGLMapViewImpl : public mbgl::View {
+class MGLMapViewImpl : public mbgl::View, public mbgl::Backend {
 public:
-    MGLMapViewImpl(MGLMapView *nativeView_, const float scaleFactor_)
-        : nativeView(nativeView_), scaleFactor(scaleFactor_) {}
-
-    float getPixelRatio() const override {
-        return scaleFactor;
-    }
+    MGLMapViewImpl(MGLMapView *nativeView_)
+        : nativeView(nativeView_) {}
 
     std::array<uint16_t, 2> getSize() const override {
         return {{ static_cast<uint16_t>(nativeView.bounds.size.width),
@@ -2555,6 +2554,14 @@ public:
         [NSOpenGLContext clearCurrentContext];
     }
 
+    void updateFramebufferBinding() {
+        MBGL_CHECK_ERROR(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo));
+    }
+
+    void bind() override {
+        MBGL_CHECK_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, fbo));
+    }
+
     mbgl::PremultipliedImage readStillImage(std::array<uint16_t, 2> size = {{ 0, 0 }}) override {
         if (!size[0] || !size[1]) {
             size = getFramebufferSize();
@@ -2579,8 +2586,8 @@ private:
     /// Cocoa map view that this adapter bridges to.
     __weak MGLMapView *nativeView = nullptr;
     
-    /// Backing scale factor of the view.
-    const float scaleFactor;
+    /// The current framebuffer of the NSOpenGLLayer we are painting to.
+    GLint fbo = 0;
 };
 
 @end

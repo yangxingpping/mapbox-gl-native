@@ -17,6 +17,7 @@
 #include <mbgl/storage/network_status.hpp>
 #include <mbgl/style/transition_options.hpp>
 #include <mbgl/style/layers/custom_layer.hpp>
+#include <mbgl/map/backend.hpp>
 #include <mbgl/math/wrap.hpp>
 #include <mbgl/util/geo.hpp>
 #include <mbgl/util/constants.hpp>
@@ -387,7 +388,7 @@ public:
 
     // setup mbgl view
     const float scaleFactor = [UIScreen instancesRespondToSelector:@selector(nativeScale)] ? [[UIScreen mainScreen] nativeScale] : [[UIScreen mainScreen] scale];
-    _mbglView = new MBGLView(self, scaleFactor);
+    _mbglView = new MBGLView(self);
     
     // Delete the pre-offline ambient cache at ~/Library/Caches/cache.db.
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
@@ -396,7 +397,7 @@ public:
 
     // setup mbgl map
     mbgl::DefaultFileSource *mbglFileSource = [MGLOfflineStorage sharedOfflineStorage].mbglFileSource;
-    _mbglMap = new mbgl::Map(*_mbglView, *mbglFileSource, mbgl::MapMode::Continuous, mbgl::GLContextMode::Unique, mbgl::ConstrainMode::None, mbgl::ViewportMode::Default);
+    _mbglMap = new mbgl::Map(*_mbglView, *_mbglView, scaleFactor, *mbglFileSource, mbgl::MapMode::Continuous, mbgl::GLContextMode::Unique, mbgl::ConstrainMode::None, mbgl::ViewportMode::Default);
     [self validateTileCacheSize];
 
     // start paused if in IB
@@ -4924,15 +4925,11 @@ public:
     return _annotationViewReuseQueueByIdentifier[identifier];
 }
 
-class MBGLView : public mbgl::View
+class MBGLView : public mbgl::View, public mbgl::Backend
 {
 public:
-    MBGLView(MGLMapView* nativeView_, const float scaleFactor_)
-        : nativeView(nativeView_), scaleFactor(scaleFactor_) {
-    }
-
-    float getPixelRatio() const override {
-        return scaleFactor;
+    MBGLView(MGLMapView* nativeView_)
+        : nativeView(nativeView_) {
     }
 
     std::array<uint16_t, 2> getSize() const override {
@@ -4943,6 +4940,10 @@ public:
     std::array<uint16_t, 2> getFramebufferSize() const override {
         return {{ static_cast<uint16_t>([[nativeView glView] drawableWidth]),
                   static_cast<uint16_t>([[nativeView glView] drawableHeight]) }};
+    }
+
+    void bind() override {
+        [nativeView.glView bindDrawable];
     }
 
     void notifyMapChange(mbgl::MapChange change) override
@@ -4967,7 +4968,6 @@ public:
 
 private:
     __weak MGLMapView *nativeView = nullptr;
-    const float scaleFactor;
 };
 
 @end
