@@ -137,7 +137,7 @@ MGLStyleFunction<ObjCType> *MGLStyleFunctionFromMBGLFunction(const mbgl::style::
 }
 
 template <typename MBGLType, typename ObjCType>
-MGLStyleValue<ObjCType> *MGLStyleValueTransformer<MBGLType, ObjCType>::toStyleValue(const mbgl::style::PropertyValue<ObjCType> &mbglValue) {
+MGLStyleValue<ObjCType> *MGLStyleValueTransformer<MBGLType, ObjCType>::toStyleValue(const mbgl::style::PropertyValue<MBGLType> &mbglValue) {
     if (mbglValue.isConstant()) {
         return MGLStyleConstantValueFromMBGLValue<MBGLType, ObjCType>(mbglValue.asConstant());
     } else if (mbglValue.isFunction()) {
