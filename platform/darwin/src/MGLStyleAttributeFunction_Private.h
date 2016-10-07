@@ -74,7 +74,8 @@
 @end
 
 template <typename MBGLType, typename ObjCType>
-MGLStyleValue<MBGLType> *MGLStyleValueFromMBGLValue(const mbgl::style::PropertyValue<ObjCType> &mbglValue);
-
-template <typename MBGLType, typename ObjCType>
-mbgl::style::PropertyValue<MBGLType> MBGLValueFromMGLStyleValue(MGLStyleValue<ObjCType> *value);
+class MGLStyleValueTransformer {
+public:
+    static MGLStyleValue<ObjCType> *toStyleValue(const mbgl::style::PropertyValue<ObjCType> &mbglValue);
+    static mbgl::style::PropertyValue<MBGLType> toPropertyValue(MGLStyleValue<ObjCType> *value);
+};

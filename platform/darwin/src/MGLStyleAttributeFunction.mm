@@ -71,7 +71,7 @@
 - (id)rawValueAtZoomLevel:(double)zoomLevel {
 #warning rawValueAtZoomLevel for zoom function
 #warning Hack: referencing this function in this file forces the template specialization to be linked in.
-    MBGLValueFromMGLStyleValue<float, NSNumber *>([MGLStyleConstantValue<NSNumber *> valueWithRawValue:@(3)]);
+    MGLStyleValueTransformer<float, NSNumber *>::toPropertyValue([MGLStyleConstantValue<NSNumber *> valueWithRawValue:@(3)]);
     return nil;
 }
 
@@ -137,7 +137,7 @@ MGLStyleFunction<ObjCType> *MGLStyleFunctionFromMBGLFunction(const mbgl::style::
 }
 
 template <typename MBGLType, typename ObjCType>
-MGLStyleValue<MBGLType> *MGLStyleValueFromMBGLValue(const mbgl::style::PropertyValue<ObjCType> &mbglValue) {
+MGLStyleValue<ObjCType> *MGLStyleValueTransformer<MBGLType, ObjCType>::toStyleValue(const mbgl::style::PropertyValue<ObjCType> &mbglValue) {
     if (mbglValue.isConstant()) {
         return MGLStyleConstantValueFromMBGLValue<MBGLType, ObjCType>(mbglValue.asConstant());
     } else if (mbglValue.isFunction()) {
@@ -189,7 +189,7 @@ void MGLGetMBGLValueFromMGLRawStyleValue(ObjCType rawValue, std::vector<MBGLType
 }
 
 template <typename MBGLType, typename ObjCType>
-mbgl::style::PropertyValue<MBGLType> MBGLValueFromMGLStyleValue(MGLStyleValue<ObjCType> *value) {
+mbgl::style::PropertyValue<MBGLType> MGLStyleValueTransformer<MBGLType, ObjCType>::toPropertyValue(MGLStyleValue<ObjCType> *value) {
     if ([value isKindOfClass:[MGLStyleConstantValue class]]) {
         MBGLType mbglValue;
         MGLGetMBGLValueFromMGLRawStyleValue([(MGLStyleConstantValue<ObjCType> *)value rawValue], mbglValue);
@@ -199,7 +199,7 @@ mbgl::style::PropertyValue<MBGLType> MBGLValueFromMGLStyleValue(MGLStyleValue<Ob
         __block std::vector<std::pair<float, MBGLType>> mbglStops;
         [function.stops enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull zoomKey, MGLStyleValue<NSNumber *> * _Nonnull stopValue, BOOL * _Nonnull stop) {
             NSCAssert([stopValue isKindOfClass:[MGLStyleValue class]], @"Stops should be MGLStyleValues");
-            auto mbglStopValue = MBGLValueFromMGLStyleValue<MBGLType, ObjCType>(stopValue);
+            auto mbglStopValue = toPropertyValue(stopValue);
             NSCAssert(mbglStopValue.isConstant(), @"Stops must be constant");
             mbglStops.emplace_back(zoomKey.floatValue, mbglStopValue.asConstant());
         }];
