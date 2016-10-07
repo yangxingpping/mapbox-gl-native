@@ -70,6 +70,8 @@
 
 - (id)rawValueAtZoomLevel:(double)zoomLevel {
 #warning rawValueAtZoomLevel for zoom function
+#warning Hack: referencing this function in this file forces the template specialization to be linked in.
+    MBGLValueFromMGLStyleValue<NSNumber *, float>([MGLStyleConstantValue<NSNumber *> valueWithRawValue:@(3)]);
     return nil;
 }
 
@@ -190,15 +192,18 @@ template <typename T, typename U>
 mbgl::style::PropertyValue<U> MBGLValueFromMGLStyleValue(MGLStyleValue<T> *value) {
     if ([value isKindOfClass:[MGLStyleConstantValue class]]) {
         U mbglValue;
-        return MGLGetMBGLValueFromMGLRawStyleValue([(MGLStyleConstantValue<T> *)value rawValue], mbglValue);
+        MGLGetMBGLValueFromMGLRawStyleValue([(MGLStyleConstantValue<T> *)value rawValue], mbglValue);
+        return mbglValue;
     } else if ([value isKindOfClass:[MGLStyleFunction class]]) {
         MGLStyleFunction<T> *function = (MGLStyleFunction<T> *)value;
         __block std::vector<std::pair<float, U>> mbglStops;
-        [function.stops enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull zoomKey, NSNumber * _Nonnull stops, BOOL * _Nonnull stop) {
-            NSCAssert([stops isKindOfClass:[NSNumber class]], @"Stops should be NSNumbers");
-            mbglStops.emplace_back(zoomKey.floatValue, stops.floatValue);
+        [function.stops enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull zoomKey, MGLStyleValue<NSNumber *> * _Nonnull stopValue, BOOL * _Nonnull stop) {
+            NSCAssert([stopValue isKindOfClass:[MGLStyleValue class]], @"Stops should be MGLStyleValues");
+            auto mbglStopValue = MBGLValueFromMGLStyleValue<T, U>(stopValue);
+            NSCAssert(mbglStopValue.isConstant(), @"Stops must be constant");
+            mbglStops.emplace_back(zoomKey.floatValue, mbglStopValue.asConstant());
         }];
-        return mbgl::style::Function<U>({{mbglStops}}, function.base.floatValue);
+        return mbgl::style::Function<U>({{mbglStops}}, function.base);
     } else {
         return {};
     }
