@@ -2,7 +2,6 @@
 
 #import "MGLStyleLayer_Private.h"
 #import "MGLStyleAttributeValue_Private.h"
-#import "MGLStyleAttributeFunction_Private.h"
 
 @implementation MGLStyleValue
 
@@ -75,17 +74,6 @@
 
 @end
 
-NSNumber *MGLRawStyleValueFromMBGLValue(const bool mbglStopValue) {
-    return @(mbglStopValue);
-}
-
-NSNumber *MGLRawStyleValueFromMBGLValue(const float mbglStopValue) {
-    return @(mbglStopValue);
-}
-
-NSString *MGLRawStyleValueFromMBGLValue(const std::string &mbglStopValue) {
-    return @(mbglStopValue.c_str());
-}
 
 // Offsets
 NSValue *MGLRawStyleValueFromMBGLValue(const std::array<float, 2> &mbglStopValue) {
@@ -97,53 +85,6 @@ NSValue *MGLRawStyleValueFromMBGLValue(const std::array<float, 4> &mbglStopValue
     return [NSValue mgl_valueWithPaddingArray:mbglStopValue];
 }
 
-// Enumerations
-template <typename T, typename U, class = typename std::enable_if<std::is_enum<T>::value>::type>
-U MGLRawStyleValueFromMBGLValue(const T &mbglStopValue) {
-    auto rawValue = static_cast<T>(mbglStopValue);
-    return [NSValue value:&rawValue withObjCType:@encode(U)];
-}
-
-MGLColor *MGLRawStyleValueFromMBGLValue(const mbgl::Color mbglStopValue) {
-    return [MGLColor mbgl_colorWithColor:mbglStopValue];
-}
-
-template <typename T, typename U>
-U MGLRawStyleValueFromMBGLValue(const std::vector<T> &mbglStopValue) {
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:mbglStopValue.size()];
-    for (const auto &mbglElement: mbglStopValue) {
-        [array addObject:MGLRawStyleValueFromMBGLValue(mbglElement)];
-    }
-    return array;
-}
-
-template <typename T, typename U>
-MGLStyleConstantValue<U> *MGLStyleConstantValueFromMBGLValue(const T mbglValue) {
-    auto rawValue = MGLRawStyleValueFromMBGLValue(mbglValue);
-    return [MGLStyleConstantValue<U> valueWithRawValue:rawValue];
-}
-
-template <typename T, typename U>
-MGLStyleFunction<U> *MGLStyleFunctionFromMBGLFunction(const mbgl::style::Function<T> &mbglFunction) {
-    const auto &mbglStops = mbglFunction.getStops();
-    NSMutableDictionary *stops = [NSMutableDictionary dictionaryWithCapacity:mbglStops.size()];
-    for (const auto &mbglStop : mbglStops) {
-        auto rawValue = MGLRawStyleValueFromMBGLValue(mbglStop.second);
-        stops[@(mbglStop.first)] = [MGLStyleValue valueWithRawValue:rawValue];
-    }
-    return [MGLStyleFunction<U> functionWithBase:mbglFunction.getBase() stops:stops];
-}
-
-template <typename T, typename U>
-MGLStyleValue<U> *MGLStyleValueFromMBGLValue(const mbgl::style::PropertyValue<T> &mbglValue) {
-    if (mbglValue.isConstant()) {
-        return MGLStyleConstantValueFromMBGLValue<T, U>(mbglValue.asConstant());
-    } else if (mbglValue.isFunction()) {
-        return MGLStyleFunctionFromMBGLFunction<T, U>(mbglValue.asFunction());
-    } else {
-        return nil;
-    }
-}
 
 void MGLGetMBGLValueFromMGLRawStyleValue(NSNumber *rawValue, bool &mbglValue) {
     mbglValue = !!rawValue.boolValue;
@@ -167,42 +108,13 @@ void MGLGetMBGLValueFromMGLRawStyleValue(NSValue *rawValue, std::array<float, 4>
     mbglValue = rawValue.mgl_paddingArrayValue;
 }
 
-// Enumerations
-template <typename T, typename U, class = typename std::enable_if<std::is_enum<U>::value>::type>
-void MGLGetMBGLValueFromMGLRawStyleValue(T rawValue, U &mbglValue) {
-    [rawValue getValue:&mbglValue];
-}
 
 void MGLGetMBGLValueFromMGLRawStyleValue(MGLColor *rawValue, mbgl::Color &mbglValue) {
     mbglValue = rawValue.mbgl_color;
 }
 
-template <typename T, typename U>
-void MGLGetMBGLValueFromMGLRawStyleValue(T rawValue, std::vector<U> &mbglValue) {
-    mbglValue.reserve(rawValue.count);
-    for (id obj in rawValue) {
-        U mbglElement;
-        mbglValue.push_back(MGLGetMBGLValueFromMGLRawStyleValue(obj, mbglElement));
-    }
-}
 
-template <typename T, typename U>
-mbgl::style::PropertyValue<U> MBGLValueFromMGLStyleValue(MGLStyleValue<T> *value) {
-    if ([value isKindOfClass:[MGLStyleConstantValue class]]) {
-        U mbglValue;
-        return MGLGetMBGLValueFromMGLRawStyleValue([(MGLStyleConstantValue<T> *)value rawValue], mbglValue);
-    } else if ([value isKindOfClass:[MGLStyleFunction class]]) {
-        MGLStyleFunction<T> *function = (MGLStyleFunction<T> *)value;
-        __block std::vector<std::pair<float, U>> mbglStops;
-        [function.stops enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull zoomKey, NSNumber * _Nonnull stops, BOOL * _Nonnull stop) {
-            NSCAssert([stops isKindOfClass:[NSNumber class]], @"Stops should be NSNumbers");
-            mbglStops.emplace_back(zoomKey.floatValue, stops.floatValue);
-        }];
-        return mbgl::style::Function<U>({{mbglStops}}, function.base.floatValue);
-    } else {
-        return {};
-    }
-}
+
 
 
 

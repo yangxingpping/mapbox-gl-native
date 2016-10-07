@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <CoreGraphics/CoreGraphics.h>
 
 #import "MGLTypes.h"
 #import "MGLStyleAttributeValue.h"
