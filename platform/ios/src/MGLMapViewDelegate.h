@@ -115,16 +115,33 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Tells the delegate that the map view has just redrawn.
- 
+
  This method is called any time the map view needs to redraw due to a change in
  the viewpoint or style property transition. This method may be called very
  frequently, even moreso than `-mapViewRegionIsChanging:`. Therefore, your
  implementation of this method should be as lightweight as possible to avoid
  affecting performance.
- 
+
  @param mapView The map view that has just redrawn.
  */
 - (void)mapViewDidFinishRenderingFrame:(MGLMapView *)mapView fullyRendered:(BOOL)fullyRendered;
+
+/**
+ Tells the delegate that the map has just finished loading a style.
+ 
+ This method is called during the initialization of the map view and after any
+ subsequent loading of a new style. This method is called between the
+ `-mapViewWillStartRenderingMap:` and `-mapViewDidFinishRenderingMap:` delegate
+ methods. Changes to sources or layers of the current style do not cause this
+ method to be called.
+ 
+ This method can be used to initiate runtime styling changes that will be
+ applied before the map view is first visible to a user.
+
+ @param mapView The map view that has just loaded a style.
+ @param style The style that was loaded.
+ */
+- (void)mapView:(MGLMapView *)mapView didFinishLoadingStyle:(MGLStyle *)style;
 
 #pragma mark Tracking User Location
 
