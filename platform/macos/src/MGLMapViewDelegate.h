@@ -134,8 +134,8 @@ NS_ASSUME_NONNULL_BEGIN
  methods. Changes to sources or layers of the current style do not cause this
  method to be called.
 
- This method can be used to initiate runtime styling changes that will be
- applied before the map view is first visible to a user.
+ This method is the earliest opportunity to modify the layout or appearance of
+ the current style before the map view is displayed to the user.
 
  @param mapView The map view that has just loaded a style.
  @param style The style that was loaded.
