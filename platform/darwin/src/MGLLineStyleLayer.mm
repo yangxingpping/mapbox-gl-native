@@ -57,24 +57,24 @@
 }
 
 - (void)setLineJoin:(MGLStyleValue <NSValue *> *)lineJoin {
-    auto propertyValue = MGLStyleValueTransformer<mbgl::style::LineJoinType, NSValue *>::toPropertyValue(lineJoin);
+    auto propertyValue = MGLStyleValueTransformer<mbgl::style::LineJoinType, NSValue *>().toPropertyValue(lineJoin);
     self.layer->setLineJoin(propertyValue);
 }
 
 - (MGLStyleValue <NSValue *> *)lineJoin {
     // MGLLineStyleLayerLineJoin
     auto propertyValue = self.layer->getLineJoin() ?: self.layer->getDefaultLineJoin();
-    return MGLStyleValueTransformer<mbgl::style::LineJoinType, NSValue *>::toStyleValue(propertyValue);
+    return MGLStyleValueTransformer<mbgl::style::LineJoinType, NSValue *>().toStyleValue(propertyValue);
 }
 
 - (void)setLineMiterLimit:(MGLStyleValue <NSNumber *> *)lineMiterLimit {
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>::toPropertyValue(lineMiterLimit);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue(lineMiterLimit);
     self.layer->setLineMiterLimit(mbglValue);
 }
 
 - (MGLStyleValue <NSNumber *> *)lineMiterLimit {
     auto propertyValue = self.layer->getLineMiterLimit() ?: self.layer->getDefaultLineMiterLimit();
-    return MGLStyleValueTransformer<float, NSNumber *>::toStyleValue(propertyValue);
+    return MGLStyleValueTransformer<float, NSNumber *>().toStyleValue(propertyValue);
 }
 
 - (void)setLineRoundLimit:(id <MGLStyleAttributeValue, MGLStyleAttributeValue_Private>)lineRoundLimit {
