@@ -57,7 +57,7 @@
 }
 
 - (void)setLineJoin:(MGLStyleValue <NSValue *> *)lineJoin {
-    self.layer->setLineJoin(MBGLValueFromMGLStyleValue<NSValue *, mbgl::style::LineJoinType>(lineJoin));
+    self.layer->setLineJoin(MBGLValueFromMGLStyleValue<mbgl::style::LineJoinType, NSValue *>(lineJoin));
 }
 
 - (MGLStyleValue <NSValue *> *)lineJoin {
@@ -67,7 +67,7 @@
 }
 
 - (void)setLineMiterLimit:(MGLStyleValue <NSNumber *> *)lineMiterLimit {
-    auto mbglValue = MBGLValueFromMGLStyleValue<NSNumber *, float>(lineMiterLimit);
+    auto mbglValue = MBGLValueFromMGLStyleValue<float, NSNumber *>(lineMiterLimit);
     self.layer->setLineMiterLimit(mbglValue);
 }
 

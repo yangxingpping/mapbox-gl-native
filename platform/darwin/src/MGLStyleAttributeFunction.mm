@@ -71,7 +71,7 @@
 - (id)rawValueAtZoomLevel:(double)zoomLevel {
 #warning rawValueAtZoomLevel for zoom function
 #warning Hack: referencing this function in this file forces the template specialization to be linked in.
-    MBGLValueFromMGLStyleValue<NSNumber *, float>([MGLStyleConstantValue<NSNumber *> valueWithRawValue:@(3)]);
+    MBGLValueFromMGLStyleValue<float, NSNumber *>([MGLStyleConstantValue<NSNumber *> valueWithRawValue:@(3)]);
     return nil;
 }
 
@@ -100,18 +100,18 @@ NSValue *MGLRawStyleValueFromMBGLValue(const std::array<float, 4> &mbglStopValue
 }
 
 // Enumerations
-template <typename T, typename U, class = typename std::enable_if<std::is_enum<T>::value>::type>
-U MGLRawStyleValueFromMBGLValue(const T &mbglStopValue) {
-    auto rawValue = static_cast<T>(mbglStopValue);
-    return [NSValue value:&rawValue withObjCType:@encode(U)];
+template <typename MBGLType, typename ObjCType, class = typename std::enable_if<std::is_enum<MBGLType>::value>::type>
+ObjCType MGLRawStyleValueFromMBGLValue(const MBGLType &mbglStopValue) {
+    ObjCType rawValue = static_cast<ObjCType>(mbglStopValue);
+    return [NSValue value:&rawValue withObjCType:@encode(ObjCType)];
 }
 
 MGLColor *MGLRawStyleValueFromMBGLValue(const mbgl::Color mbglStopValue) {
     return [MGLColor mbgl_colorWithColor:mbglStopValue];
 }
 
-template <typename T, typename U>
-U MGLRawStyleValueFromMBGLValue(const std::vector<T> &mbglStopValue) {
+template <typename MBGLType, typename ObjCType>
+ObjCType MGLRawStyleValueFromMBGLValue(const std::vector<MBGLType> &mbglStopValue) {
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:mbglStopValue.size()];
     for (const auto &mbglElement: mbglStopValue) {
         [array addObject:MGLRawStyleValueFromMBGLValue(mbglElement)];
@@ -119,29 +119,29 @@ U MGLRawStyleValueFromMBGLValue(const std::vector<T> &mbglStopValue) {
     return array;
 }
 
-template <typename T, typename U>
-MGLStyleConstantValue<U> *MGLStyleConstantValueFromMBGLValue(const T mbglValue) {
+template <typename MBGLType, typename ObjCType>
+MGLStyleConstantValue<ObjCType> *MGLStyleConstantValueFromMBGLValue(const MBGLType mbglValue) {
     auto rawValue = MGLRawStyleValueFromMBGLValue(mbglValue);
-    return [MGLStyleConstantValue<U> valueWithRawValue:rawValue];
+    return [MGLStyleConstantValue<ObjCType> valueWithRawValue:rawValue];
 }
 
-template <typename T, typename U>
-MGLStyleFunction<U> *MGLStyleFunctionFromMBGLFunction(const mbgl::style::Function<T> &mbglFunction) {
+template <typename MBGLType, typename ObjCType>
+MGLStyleFunction<ObjCType> *MGLStyleFunctionFromMBGLFunction(const mbgl::style::Function<MBGLType> &mbglFunction) {
     const auto &mbglStops = mbglFunction.getStops();
     NSMutableDictionary *stops = [NSMutableDictionary dictionaryWithCapacity:mbglStops.size()];
     for (const auto &mbglStop : mbglStops) {
         auto rawValue = MGLRawStyleValueFromMBGLValue(mbglStop.second);
         stops[@(mbglStop.first)] = [MGLStyleValue valueWithRawValue:rawValue];
     }
-    return [MGLStyleFunction<U> functionWithBase:mbglFunction.getBase() stops:stops];
+    return [MGLStyleFunction<ObjCType> functionWithBase:mbglFunction.getBase() stops:stops];
 }
 
-template <typename T, typename U>
-MGLStyleValue<U> *MGLStyleValueFromMBGLValue(const mbgl::style::PropertyValue<T> &mbglValue) {
+template <typename MBGLType, typename ObjCType>
+MGLStyleValue<MBGLType> *MGLStyleValueFromMBGLValue(const mbgl::style::PropertyValue<ObjCType> &mbglValue) {
     if (mbglValue.isConstant()) {
-        return MGLStyleConstantValueFromMBGLValue<T, U>(mbglValue.asConstant());
+        return MGLStyleConstantValueFromMBGLValue<MBGLType, ObjCType>(mbglValue.asConstant());
     } else if (mbglValue.isFunction()) {
-        return MGLStyleFunctionFromMBGLFunction<T, U>(mbglValue.asFunction());
+        return MGLStyleFunctionFromMBGLFunction<MBGLType, ObjCType>(mbglValue.asFunction());
     } else {
         return nil;
     }
@@ -170,8 +170,8 @@ void MGLGetMBGLValueFromMGLRawStyleValue(NSValue *rawValue, std::array<float, 4>
 }
 
 // Enumerations
-template <typename T, typename U, class = typename std::enable_if<std::is_enum<U>::value>::type>
-void MGLGetMBGLValueFromMGLRawStyleValue(T rawValue, U &mbglValue) {
+template <typename MBGLType, typename ObjCType, class = typename std::enable_if<std::is_enum<MBGLType>::value>::type>
+void MGLGetMBGLValueFromMGLRawStyleValue(ObjCType rawValue, MBGLType &mbglValue) {
     [rawValue getValue:&mbglValue];
 }
 
@@ -179,31 +179,31 @@ void MGLGetMBGLValueFromMGLRawStyleValue(MGLColor *rawValue, mbgl::Color &mbglVa
     mbglValue = rawValue.mbgl_color;
 }
 
-template <typename T, typename U>
-void MGLGetMBGLValueFromMGLRawStyleValue(T rawValue, std::vector<U> &mbglValue) {
+template <typename MBGLType, typename ObjCType>
+void MGLGetMBGLValueFromMGLRawStyleValue(ObjCType rawValue, std::vector<MBGLType> &mbglValue) {
     mbglValue.reserve(rawValue.count);
     for (id obj in rawValue) {
-        U mbglElement;
+        MBGLType mbglElement;
         mbglValue.push_back(MGLGetMBGLValueFromMGLRawStyleValue(obj, mbglElement));
     }
 }
 
-template <typename T, typename U>
-mbgl::style::PropertyValue<U> MBGLValueFromMGLStyleValue(MGLStyleValue<T> *value) {
+template <typename MBGLType, typename ObjCType>
+mbgl::style::PropertyValue<MBGLType> MBGLValueFromMGLStyleValue(MGLStyleValue<ObjCType> *value) {
     if ([value isKindOfClass:[MGLStyleConstantValue class]]) {
-        U mbglValue;
-        MGLGetMBGLValueFromMGLRawStyleValue([(MGLStyleConstantValue<T> *)value rawValue], mbglValue);
+        MBGLType mbglValue;
+        MGLGetMBGLValueFromMGLRawStyleValue([(MGLStyleConstantValue<ObjCType> *)value rawValue], mbglValue);
         return mbglValue;
     } else if ([value isKindOfClass:[MGLStyleFunction class]]) {
-        MGLStyleFunction<T> *function = (MGLStyleFunction<T> *)value;
-        __block std::vector<std::pair<float, U>> mbglStops;
+        MGLStyleFunction<ObjCType> *function = (MGLStyleFunction<ObjCType> *)value;
+        __block std::vector<std::pair<float, MBGLType>> mbglStops;
         [function.stops enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull zoomKey, MGLStyleValue<NSNumber *> * _Nonnull stopValue, BOOL * _Nonnull stop) {
             NSCAssert([stopValue isKindOfClass:[MGLStyleValue class]], @"Stops should be MGLStyleValues");
-            auto mbglStopValue = MBGLValueFromMGLStyleValue<T, U>(stopValue);
+            auto mbglStopValue = MBGLValueFromMGLStyleValue<MBGLType, ObjCType>(stopValue);
             NSCAssert(mbglStopValue.isConstant(), @"Stops must be constant");
             mbglStops.emplace_back(zoomKey.floatValue, mbglStopValue.asConstant());
         }];
-        return mbgl::style::Function<U>({{mbglStops}}, function.base);
+        return mbgl::style::Function<MBGLType>({{mbglStops}}, function.base);
     } else {
         return {};
     }

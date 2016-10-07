@@ -73,8 +73,8 @@
 
 @end
 
-template <typename T, typename U>
-mbgl::style::PropertyValue<U> MBGLValueFromMGLStyleValue(MGLStyleValue<T> *value);
+template <typename MBGLType, typename ObjCType>
+MGLStyleValue<MBGLType> *MGLStyleValueFromMBGLValue(const mbgl::style::PropertyValue<ObjCType> &mbglValue);
 
-template <typename T, typename U>
-MGLStyleValue<U> *MGLStyleValueFromMBGLValue(mbgl::style::PropertyValue<T> &mbglValue);
+template <typename MBGLType, typename ObjCType>
+mbgl::style::PropertyValue<MBGLType> MBGLValueFromMGLStyleValue(MGLStyleValue<ObjCType> *value);
