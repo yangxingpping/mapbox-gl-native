@@ -10,10 +10,60 @@
 #import "MGLPolygon+MGLAdditions.h"
 #import <mbgl/util/geometry.hpp>
 
-@protocol MGLFeaturePrivate <MGLFeature>
+@interface MGLFeatureHelper : NSObject
 
-@property (nonatomic, copy, nullable, readwrite) id identifier;
-@property (nonatomic, copy, readwrite) NS_DICTIONARY_OF(NSString *, id) *attributes;
++ (mbgl::Value)convertedValueWithValue:(id)value;
+
+@end
+
+// Multiple numeric types (uint64_t, int64_t, double) are present in order to support
+// the widest possible range of JSON numbers, which do not have a maximum range.
+// Implementations that produce `value`s should use that order for type preference,
+// using uint64_t for positive integers, int64_t for negative integers, and double
+// for non-integers and integers outside the range of 64 bits.
+//using value_base = mapbox::util::variant<null_value_t, bool, uint64_t, int64_t, double, std::string,
+//mapbox::util::recursive_wrapper<std::vector<value>>,
+//mapbox::util::recursive_wrapper<std::unordered_map<std::string, value>>>;
+@implementation MGLFeatureHelper
+
++ (mbgl::Value)convertedValueWithValue:(id)value {
+    if ([value isKindOfClass:NSString.class]) {
+        return { std::string([(NSString *)value UTF8String]) };
+    } else if ([value isKindOfClass:NSNumber.class]) {
+        NSNumber *number = (NSNumber *)value;
+        if ((strcmp([number objCType], @encode(char)) == 0) ||
+            (strcmp([number objCType], @encode(BOOL)) == 0)) {
+            // char: 32-bit boolean
+            // BOOL: 64-bit boolean
+            return { (bool)number.boolValue };
+        } else if (strcmp([number objCType], @encode(double)) == 0) {
+            // Double values on all platforms are interpreted precisely.
+            return { (double)number.doubleValue };
+        } else if (strcmp([number objCType], @encode(float)) == 0) {
+            // Float values when taken as double introduce precision problems,
+            // so warn the user to avoid them. This would require them to
+            // explicitly use -[NSNumber numberWithFloat:] arguments anyway.
+            // We still do this conversion in order to provide a valid value.
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                NSLog(@"One-time warning: Float values are converted to double and can introduce imprecision; please use double values explicitly in predicate arguments.");
+            });
+            return { (double)number.doubleValue };
+        } else if ([number compare:@(0)] == NSOrderedDescending ||
+                   [number compare:@(0)] == NSOrderedSame) {
+            // Positive integer or zero; use uint64_t per mbgl::Value definition.
+            // We use unsigned long long here to avoid any truncation.
+            return { (uint64_t)number.unsignedLongLongValue };
+        } else if ([number compare:@(0)] == NSOrderedAscending) {
+            // Negative integer; use int64_t per mbgl::Value definition.
+            // We use long long here to avoid any truncation.
+            return { (int64_t)number.longLongValue };
+        }
+    }
+    [NSException raise:@"Value not handled"
+                format:@"Can’t convert %s:%@ to mbgl::Value", [value objCType], value];
+    return { };
+}
 
 @end
 
@@ -49,7 +99,6 @@
 
 @synthesize identifier;
 @synthesize attributes;
-// 
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
@@ -87,6 +136,19 @@
                     @"coordinates":self.mgl_coordinates
                     }
             };
+}
+
+- (mbgl::Feature)mbglFeature {
+    auto feature = [self featureObject];
+    mbgl::PropertyMap propertyMap;
+    for (NSString *key in self.attributes.allKeys) {
+        id value = self.attributes[key];
+    #warning temporary debug logging
+        NSLog(@"================> %@, %@", key, value);
+        propertyMap[[key cStringUsingEncoding:NSUTF8StringEncoding]] = [MGLFeatureHelper convertedValueWithValue:value];
+    }
+    feature.properties = propertyMap;
+    return feature;
 }
 
 @end

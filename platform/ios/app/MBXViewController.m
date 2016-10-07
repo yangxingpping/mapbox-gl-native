@@ -796,14 +796,15 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
     CGRect queryRect = CGRectInset(self.mapView.bounds, 100, 200);
     NSArray *features = [self.mapView visibleFeaturesInRect:queryRect];
     
-//    NSMutableArray *polygonFeatures = [NSMutableArray array];
-//    for (id<MGLFeature> feature in features) {
-//        if ([feature isMemberOfClass:[MGLPolygonFeature class]]) {
-//            [polygonFeatures addObject:feature];
-//        }
-//    }
     
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"query-id" features:features options:nil];
+    NSMutableArray *polygonFeatures = [NSMutableArray array];
+    for (id<MGLFeature> feature in features) {
+        if ([feature isMemberOfClass:[MGLPolygonFeature class]]) {
+            [polygonFeatures addObject:feature];
+        }
+    }
+    
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"query-id" features:polygonFeatures options:nil];
     [self.mapView.style addSource:source];
     
     MGLFillStyleLayer *fillLayer = [[MGLFillStyleLayer alloc] initWithIdentifier:@"query-layer-id" source:source];

@@ -36,6 +36,15 @@
     return result;
 }
 
+- (mbgl::Feature)featureObject {
+    mbgl::Polygon<double> geometry;
+    geometry.push_back(self.ring);
+    for (MGLPolygon *polygon in self.interiorPolygons) {
+        geometry.push_back(polygon.ring);
+    }
+    return mbgl::Feature{geometry};
+}
+
 - (mbgl::Annotation)annotationObjectWithDelegate:(id <MGLMultiPointDelegate>)delegate {
     mbgl::Polygon<double> geometry;
     geometry.push_back(self.ring);

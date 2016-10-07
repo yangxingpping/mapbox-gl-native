@@ -3,6 +3,7 @@
 #import "MGLGeometry.h"
 
 #import <mbgl/annotation/annotation.hpp>
+#import <mbgl/util/feature.hpp>
 #import <vector>
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -23,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** Constructs a shape annotation object, asking the delegate for style values. */
 - (mbgl::Annotation)annotationObjectWithDelegate:(id <MGLMultiPointDelegate>)delegate;
 
+- (mbgl::Feature)featureObject;
 @end
 
 /** An object that tells the MGLMultiPoint instance how to style itself. */

@@ -1,12 +1,18 @@
 #import <XCTest/XCTest.h>
 
 #import <Mapbox/Mapbox.h>
+#import "MGLFeature_Private.h"
 #import "MGLGeoJSONSource_Private.h"
 #import "MGLSource_Private.h"
 
 #include <mbgl/style/sources/geojson_source.hpp>
 
 @interface MGLGeoJSONSourceTests : XCTestCase
+@end
+
+@interface MGLPolygonFeature (Test)
+
+@property (nonatomic, copy, readwrite) NS_DICTIONARY_OF(NSString *, id) *attributes;
 
 @end
 
@@ -63,7 +69,6 @@
     XCTAssertTrue([source.features.firstObject isMemberOfClass:[MGLPolylineFeature class]]);
 }
 
-
 - (void)testMGLGeoJSONSourceWithPolygonFeatures {
     CLLocationCoordinate2D coordinates[] = {
         CLLocationCoordinate2DMake(100.0, 0.0),
@@ -71,15 +76,20 @@
         CLLocationCoordinate2DMake(101.0, 1.0),
         CLLocationCoordinate2DMake(100.0, 1.0),
         CLLocationCoordinate2DMake(100.0, 0.0)};
-    MGLPolygonFeature *polygonFeature = [MGLPolygonFeature polygonWithCoordinates:coordinates count:5];
     
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"" features:@[polygonFeature] options:nil];
+    MGLPolygonFeature *polygonFeature = [MGLPolygonFeature polygonWithCoordinates:coordinates count:5];
+    NSString *nameAttribute = @"test-shape";
+    polygonFeature.attributes = @{@"name": nameAttribute};
+    
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"test-id" features:@[polygonFeature] options:nil];
     
     std::unique_ptr<mbgl::style::Source> mbglSource = [source mbglSource];
     
     XCTAssertNotNil(source.features);
     XCTAssertEqual(source.features.count, 1);
-    XCTAssertTrue([source.features.firstObject isMemberOfClass:[MGLPolygonFeature class]]);
+    MGLPolygonFeature *expectedPolygonFeature = (MGLPolygonFeature *)source.features.firstObject;
+    XCTAssertTrue([expectedPolygonFeature isMemberOfClass:[MGLPolygonFeature class]]);
+    XCTAssertEqualObjects(expectedPolygonFeature.attributes[@"name"], nameAttribute);
 }
 
 - (void)testMGLGeoJSONSourceWithPolygonFeaturesInculdingInteriorPolygons {
