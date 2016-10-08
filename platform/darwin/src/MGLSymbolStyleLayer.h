@@ -217,7 +217,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  The default value of this property is an `NSValue` object containing `MGLSymbolStyleLayerSymbolPlacementPoint`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> symbolPlacement;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *symbolPlacement;
 
 /**
  Distance between two symbol anchors.
@@ -228,14 +228,14 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `symbolPlacement` is set to an `NSValue` object containing `MGLSymbolStyleLayerSymbolPlacementLine`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> symbolSpacing;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *symbolSpacing;
 
 /**
  If true, the symbols will not cross tile edges to avoid mutual collisions. Recommended in layers that don't have enough padding in the vector tile to prevent collisions, or if it is a point symbol layer placed after a line symbol layer.
  
  The default value of this property is an `NSNumber` object containing `NO`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> symbolAvoidEdges;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *symbolAvoidEdges;
 
 /**
  If true, the icon will be visible even if it collides with other previously drawn symbols.
@@ -244,7 +244,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconAllowOverlap;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconAllowOverlap;
 
 /**
  If true, other symbols can be visible even if they collide with the icon.
@@ -253,7 +253,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconIgnorePlacement;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconIgnorePlacement;
 
 /**
  If true, text will display without their corresponding icons when the icon collides with other symbols and the text does not.
@@ -262,7 +262,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`, and `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconOptional;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconOptional;
 
 /**
  In combination with `symbolPlacement`, determines the rotation behavior of icons.
@@ -271,7 +271,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconRotationAlignment;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *iconRotationAlignment;
 
 /**
  Scale factor for icon. 1 is original size, 3 triples the size.
@@ -280,7 +280,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconSize;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconSize;
 
 /**
  Scales the icon to fit around the associated text.
@@ -289,7 +289,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`, and `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconTextFit;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *iconTextFit;
 
 /**
  Size of the additional area added to dimensions determined by `iconTextFit`, in clockwise order: top, right, bottom, left.
@@ -300,12 +300,12 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`, and `textField` is non-`nil`, and `iconTextFit` is set to an `NSValue` object containing `MGLSymbolStyleLayerIconTextFitBoth`, `MGLSymbolStyleLayerIconTextFitWidth`, or `MGLSymbolStyleLayerIconTextFitHeight`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconTextFitPadding;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *iconTextFitPadding;
 
 /**
  A string with {tokens} replaced, referencing the data property to pull from.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconImage;
+@property (nonatomic, null_resettable) MGLStyleValue<NSString *> *iconImage;
 
 /**
  Rotates the icon clockwise.
@@ -316,7 +316,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconRotate;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconRotate;
 
 /**
  Size of the additional area around the icon bounding box used for detecting symbol collisions.
@@ -327,7 +327,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconPadding;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconPadding;
 
 /**
  If true, the icon may be flipped to prevent it from being rendered upside-down.
@@ -336,7 +336,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`, and `iconRotationAlignment` is set to an `NSValue` object containing `MGLSymbolStyleLayerIconRotationAlignmentMap`, and `symbolPlacement` is set to an `NSValue` object containing `MGLSymbolStyleLayerSymbolPlacementLine`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconKeepUpright;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconKeepUpright;
 
 /**
  Offset distance of icon from its anchor. Positive values indicate right and down, while negative values indicate left and up.
@@ -345,7 +345,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconOffset;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *iconOffset;
 
 /**
  Orientation of text when map is pitched.
@@ -354,7 +354,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textPitchAlignment;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *textPitchAlignment;
 
 /**
  In combination with `symbolPlacement`, determines the rotation behavior of the individual glyphs forming the text.
@@ -363,14 +363,14 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textRotationAlignment;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *textRotationAlignment;
 
 /**
  Value to use for a text label. Feature properties are specified using tokens like {field_name}.
  
  The default value of this property is the string ``. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textField;
+@property (nonatomic, null_resettable) MGLStyleValue<NSString *> *textField;
 
 /**
  Font stack to use for displaying text.
@@ -379,7 +379,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textFont;
+@property (nonatomic, null_resettable) MGLStyleValue<NSArray<NSString *> *> *textFont;
 
 /**
  Font size.
@@ -390,7 +390,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textSize;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textSize;
 
 /**
  The maximum line width for text wrapping.
@@ -401,7 +401,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textMaxWidth;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textMaxWidth;
 
 /**
  Text leading value for multi-line text.
@@ -412,7 +412,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textLineHeight;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textLineHeight;
 
 /**
  Text tracking amount.
@@ -423,7 +423,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textLetterSpacing;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textLetterSpacing;
 
 /**
  Text justification options.
@@ -432,7 +432,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textJustify;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *textJustify;
 
 /**
  Part of the text placed closest to the anchor.
@@ -441,7 +441,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textAnchor;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *textAnchor;
 
 /**
  Maximum angle change between adjacent characters.
@@ -452,7 +452,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`, and `symbolPlacement` is set to an `NSValue` object containing `MGLSymbolStyleLayerSymbolPlacementLine`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textMaxAngle;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textMaxAngle;
 
 /**
  Rotates the text clockwise.
@@ -463,7 +463,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textRotate;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textRotate;
 
 /**
  Size of the additional area around the text bounding box used for detecting symbol collisions.
@@ -474,7 +474,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textPadding;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textPadding;
 
 /**
  If true, the text may be flipped vertically to prevent it from being rendered upside-down.
@@ -483,7 +483,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`, and `textRotationAlignment` is set to an `NSValue` object containing `MGLSymbolStyleLayerTextRotationAlignmentMap`, and `symbolPlacement` is set to an `NSValue` object containing `MGLSymbolStyleLayerSymbolPlacementLine`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textKeepUpright;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textKeepUpright;
 
 /**
  Specifies how to capitalize text, similar to the CSS `text-transform` property.
@@ -492,7 +492,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textTransform;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *textTransform;
 
 /**
  Offset distance of text from its anchor. Positive values indicate right and down, while negative values indicate left and up.
@@ -503,7 +503,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textOffset;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *textOffset;
 
 /**
  If true, the text will be visible even if it collides with other previously drawn symbols.
@@ -512,7 +512,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textAllowOverlap;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textAllowOverlap;
 
 /**
  If true, other symbols can be visible even if they collide with the text.
@@ -521,7 +521,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textIgnorePlacement;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textIgnorePlacement;
 
 /**
  If true, icons will display without their corresponding text when the text collides with other symbols and the icon does not.
@@ -530,7 +530,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
  
  This property is only applied to the style if `textField` is non-`nil`, and `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textOptional;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textOptional;
 
 #pragma mark - Accessing the Paint Attributes
 
@@ -541,7 +541,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconOpacity;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconOpacity;
 
 #if TARGET_OS_IPHONE
 /**
@@ -551,7 +551,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconColor;
+@property (nonatomic, null_resettable) MGLStyleValue<MGLColor *> *iconColor;
 #else
 /**
  The color of the icon. This can only be used with sdf icons.
@@ -560,7 +560,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconColor;
+@property (nonatomic, null_resettable) MGLStyleValue<MGLColor *> *iconColor;
 #endif
 
 #if TARGET_OS_IPHONE
@@ -571,7 +571,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconHaloColor;
+@property (nonatomic, null_resettable) MGLStyleValue<MGLColor *> *iconHaloColor;
 #else
 /**
  The color of the icon's halo. Icon halos can only be used with SDF icons.
@@ -580,7 +580,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconHaloColor;
+@property (nonatomic, null_resettable) MGLStyleValue<MGLColor *> *iconHaloColor;
 #endif
 
 /**
@@ -592,7 +592,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconHaloWidth;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconHaloWidth;
 
 /**
  Fade out the halo towards the outside.
@@ -603,7 +603,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconHaloBlur;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *iconHaloBlur;
 
 /**
  Distance that the icon's anchor is moved from its original placement. Positive values indicate right and down, while negative values indicate left and up.
@@ -614,7 +614,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconTranslate;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *iconTranslate;
 
 /**
  Controls the translation reference point.
@@ -623,7 +623,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `iconImage` is non-`nil`, and `iconTranslate` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> iconTranslateAnchor;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *iconTranslateAnchor;
 
 /**
  The opacity at which the text will be drawn.
@@ -632,7 +632,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textOpacity;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textOpacity;
 
 #if TARGET_OS_IPHONE
 /**
@@ -642,7 +642,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textColor;
+@property (nonatomic, null_resettable) MGLStyleValue<MGLColor *> *textColor;
 #else
 /**
  The color with which the text will be drawn.
@@ -651,7 +651,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textColor;
+@property (nonatomic, null_resettable) MGLStyleValue<MGLColor *> *textColor;
 #endif
 
 #if TARGET_OS_IPHONE
@@ -662,7 +662,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textHaloColor;
+@property (nonatomic, null_resettable) MGLStyleValue<MGLColor *> *textHaloColor;
 #else
 /**
  The color of the text's halo, which helps it stand out from backgrounds.
@@ -671,7 +671,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textHaloColor;
+@property (nonatomic, null_resettable) MGLStyleValue<MGLColor *> *textHaloColor;
 #endif
 
 /**
@@ -683,7 +683,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textHaloWidth;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textHaloWidth;
 
 /**
  The halo's fadeout distance towards the outside.
@@ -694,7 +694,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textHaloBlur;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textHaloBlur;
 
 /**
  Distance that the text's anchor is moved from its original placement. Positive values indicate right and down, while negative values indicate left and up.
@@ -705,7 +705,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textTranslate;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *textTranslate;
 
 /**
  Controls the translation reference point.
@@ -714,7 +714,7 @@ typedef NS_ENUM(NSUInteger, MGLSymbolStyleLayerTextTranslateAnchor) {
 
  This property is only applied to the style if `textField` is non-`nil`, and `textTranslate` is non-`nil`. Otherwise, it is ignored.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> textTranslateAnchor;
+@property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *textTranslateAnchor;
 
 @end
 

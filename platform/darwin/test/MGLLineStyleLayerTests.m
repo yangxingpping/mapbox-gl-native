@@ -33,14 +33,17 @@
 
     MGLLineStyleLayer *gLayer = (MGLLineStyleLayer *)[self.mapView.style layerWithIdentifier:@"layerID"];
     XCTAssertTrue([gLayer isKindOfClass:[MGLLineStyleLayer class]]);
-    XCTAssert([(NSValue *)gLayer.lineCap isEqualToValue:[MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineCapSquare type:@encode(MGLLineStyleLayerLineCap)]], @"%@ is not equal to %@", gLayer.lineCap, [MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineCapSquare type:@encode(MGLLineStyleLayerLineCap)]);
-    XCTAssert([(NSValue *)gLayer.lineJoin isEqualToValue:[MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineJoinMiter type:@encode(MGLLineStyleLayerLineJoin)]], @"%@ is not equal to %@", gLayer.lineJoin, [MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineJoinMiter type:@encode(MGLLineStyleLayerLineJoin)]);
+    XCTAssert([gLayer.lineCap isKindOfClass:[MGLStyleConstantValue class]]);
+    XCTAssertEqualObjects(gLayer.lineCap, [MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineCapSquare type:@encode(MGLLineStyleLayerLineCap)]);
+    XCTAssert([gLayer.lineJoin isKindOfClass:[MGLStyleConstantValue class]]);
+    XCTAssertEqualObjects(gLayer.lineJoin, [MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineJoinMiter type:@encode(MGLLineStyleLayerLineJoin)]);
     XCTAssertEqualObjects(gLayer.lineMiterLimit, [MGLRuntimeStylingHelper testNumber]);
     XCTAssertEqualObjects(gLayer.lineRoundLimit, [MGLRuntimeStylingHelper testNumber]);
     XCTAssertEqualObjects(gLayer.lineOpacity, [MGLRuntimeStylingHelper testNumber]);
     XCTAssertEqualObjects(gLayer.lineColor, [MGLRuntimeStylingHelper testColor]);
     XCTAssertEqualObjects(gLayer.lineTranslate, [MGLRuntimeStylingHelper testOffset]);
-    XCTAssert([(NSValue *)gLayer.lineTranslateAnchor isEqualToValue:[MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineTranslateAnchorViewport type:@encode(MGLLineStyleLayerLineTranslateAnchor)]], @"%@ is not equal to %@", gLayer.lineTranslateAnchor, [MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineTranslateAnchorViewport type:@encode(MGLLineStyleLayerLineTranslateAnchor)]);
+    XCTAssert([gLayer.lineTranslateAnchor isKindOfClass:[MGLStyleConstantValue class]]);
+    XCTAssertEqualObjects(gLayer.lineTranslateAnchor, [MGLRuntimeStylingHelper testEnum:MGLLineStyleLayerLineTranslateAnchorViewport type:@encode(MGLLineStyleLayerLineTranslateAnchor)]);
     XCTAssertEqualObjects(gLayer.lineWidth, [MGLRuntimeStylingHelper testNumber]);
     XCTAssertEqualObjects(gLayer.lineGapWidth, [MGLRuntimeStylingHelper testNumber]);
     XCTAssertEqualObjects(gLayer.lineOffset, [MGLRuntimeStylingHelper testNumber]);

@@ -31,7 +31,8 @@
     XCTAssertEqualObjects(gLayer.fillColor, [MGLRuntimeStylingHelper testColor]);
     XCTAssertEqualObjects(gLayer.fillOutlineColor, [MGLRuntimeStylingHelper testColor]);
     XCTAssertEqualObjects(gLayer.fillTranslate, [MGLRuntimeStylingHelper testOffset]);
-    XCTAssert([(NSValue *)gLayer.fillTranslateAnchor isEqualToValue:[MGLRuntimeStylingHelper testEnum:MGLFillStyleLayerFillTranslateAnchorViewport type:@encode(MGLFillStyleLayerFillTranslateAnchor)]], @"%@ is not equal to %@", gLayer.fillTranslateAnchor, [MGLRuntimeStylingHelper testEnum:MGLFillStyleLayerFillTranslateAnchorViewport type:@encode(MGLFillStyleLayerFillTranslateAnchor)]);
+    XCTAssert([gLayer.fillTranslateAnchor isKindOfClass:[MGLStyleConstantValue class]]);
+    XCTAssertEqualObjects(gLayer.fillTranslateAnchor, [MGLRuntimeStylingHelper testEnum:MGLFillStyleLayerFillTranslateAnchorViewport type:@encode(MGLFillStyleLayerFillTranslateAnchor)]);
     XCTAssertEqualObjects(gLayer.fillPattern, [MGLRuntimeStylingHelper testString]);
 
     layer.fillAntialias = [MGLRuntimeStylingHelper testBoolFunction];

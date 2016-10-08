@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  The default value of this property is an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> rasterOpacity;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterOpacity;
 
 /**
  Rotates hues around the color wheel.
@@ -30,35 +30,35 @@ NS_ASSUME_NONNULL_BEGIN
  
  The default value of this property is an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> rasterHueRotate;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterHueRotate;
 
 /**
  Increase or reduce the brightness of the image. The value is the minimum brightness.
  
  The default value of this property is an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> rasterBrightnessMin;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMin;
 
 /**
  Increase or reduce the brightness of the image. The value is the maximum brightness.
  
  The default value of this property is an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> rasterBrightnessMax;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMax;
 
 /**
  Increase or reduce the saturation of the image.
  
  The default value of this property is an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> rasterSaturation;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterSaturation;
 
 /**
  Increase or reduce the contrast of the image.
  
  The default value of this property is an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> rasterContrast;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterContrast;
 
 /**
  Fade duration when a new tile is added.
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  The default value of this property is an `NSNumber` object containing the float `300`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) id <MGLStyleAttributeValue> rasterFadeDuration;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterFadeDuration;
 
 @end
 
