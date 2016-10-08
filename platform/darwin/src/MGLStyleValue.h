@@ -1,10 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-@protocol MGLStyleAttributeValue <NSObject>
-@optional
-@end
-
 @interface MGLStyleValue<T> : NSObject
 
 + (instancetype)valueWithRawValue:(T)rawValue;

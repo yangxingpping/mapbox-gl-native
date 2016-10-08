@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 
 #import "MGLTypes.h"
-#import "MGLStyleAttributeFunction.h"
+#import "MGLStyleValue.h"
 
 @interface MGLRuntimeStylingHelper : NSObject
 

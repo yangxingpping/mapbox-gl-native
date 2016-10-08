@@ -1,17 +1,15 @@
-#import "MGLStyleAttributeFunction.h"
+#import <Foundation/Foundation.h>
 
-#import "NSValue+MGLStyleAttributeAdditions_Private.h"
+#import "MGLStyleValue.h"
+
+#import "NSValue+MGLStyleAttributeAdditions.h"
+#import "MGLTypes.h"
 
 #if TARGET_OS_IPHONE
     #import "UIColor+MGLAdditions.h"
 #else
     #import "NSColor+MGLAdditions.h"
 #endif
-
-#include <mbgl/util/color.hpp>
-#include <mbgl/util/variant.hpp>
-#include <mbgl/style/function.hpp>
-#include <mbgl/style/property_value.hpp>
 
 #include <array>
 

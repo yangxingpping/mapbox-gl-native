@@ -4,7 +4,7 @@
 #import "MGLSource.h"
 #import "NSPredicate+MGLAdditions.h"
 #import "MGLStyleLayer_Private.h"
-#import "MGLStyleAttributeValue.h"
+#import "MGLStyleValue_Private.h"
 #import "MGLLineStyleLayer.h"
 
 #include <mbgl/style/layers/line_layer.hpp>

@@ -4,7 +4,7 @@
 #import "MGLSource.h"
 #import "NSPredicate+MGLAdditions.h"
 #import "MGLStyleLayer_Private.h"
-#import "MGLStyleAttributeValue.h"
+#import "MGLStyleValue_Private.h"
 #import "MGLSymbolStyleLayer.h"
 
 #include <mbgl/style/layers/symbol_layer.hpp>

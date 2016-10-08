@@ -4,7 +4,7 @@
 #import "MGLSource.h"
 #import "NSPredicate+MGLAdditions.h"
 #import "MGLStyleLayer_Private.h"
-#import "MGLStyleAttributeValue.h"
+#import "MGLStyleValue_Private.h"
 #import "MGLBackgroundStyleLayer.h"
 
 #include <mbgl/style/layers/background_layer.hpp>
