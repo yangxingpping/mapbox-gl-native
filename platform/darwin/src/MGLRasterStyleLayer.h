@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The opacity at which the image will be drawn.
  
- The default value of this property is an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterOpacity;
 
@@ -28,35 +28,35 @@ NS_ASSUME_NONNULL_BEGIN
 
  This property is measured in degrees.
  
- The default value of this property is an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterHueRotate;
 
 /**
  Increase or reduce the brightness of the image. The value is the minimum brightness.
  
- The default value of this property is an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMin;
 
 /**
  Increase or reduce the brightness of the image. The value is the maximum brightness.
  
- The default value of this property is an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMax;
 
 /**
  Increase or reduce the saturation of the image.
  
- The default value of this property is an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterSaturation;
 
 /**
  Increase or reduce the contrast of the image.
  
- The default value of this property is an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterContrast;
 
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  This property is measured in milliseconds.
  
- The default value of this property is an `NSNumber` object containing the float `300`. Set this property to `nil` to reset it to the default value.
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `300`. Set this property to `nil` to reset it to the default value.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterFadeDuration;
 

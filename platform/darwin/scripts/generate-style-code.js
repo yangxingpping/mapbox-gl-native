@@ -130,7 +130,7 @@ global.propertyReqs = function (property, layoutPropertiesByName, type) {
             return '`' + camelizeWithLeadingLowercase(req['!']) + '` is set to `nil`';
         } else {
             let name = Object.keys(req)[0];
-            return '`' + camelizeWithLeadingLowercase(name) + '` is set to ' + describeValue(req[name], layoutPropertiesByName[name], type);
+            return '`' + camelizeWithLeadingLowercase(name) + '` is set to an `MGLStyleValue` object containing ' + describeValue(req[name], layoutPropertiesByName[name], type);
         }
     }).join(', and ') + '. Otherwise, it is ignored.';
 };
@@ -205,7 +205,7 @@ global.describeValue = function (value, property, layerType) {
 };
 
 global.propertyDefault = function (property, layerType) {
-    return describeValue(property.default, property, layerType);
+    return 'an `MGLStyleValue` object containing ' + describeValue(property.default, property, layerType);
 };
 
 global.propertyType = function (property) {
