@@ -43,8 +43,16 @@ TEST(Annotations, SymbolAnnotation) {
     test.map.addAnnotation(SymbolAnnotation { Point<double>(0, 0), "default_marker" });
     test.checkRendering("point_annotation");
 
+    auto size = test.view.getSize();
+    auto screenBox = ScreenBox { {}, { double(size[0]), double(size[1]) } };
+    auto features = test.map.queryRenderedFeatures(screenBox);
+    EXPECT_EQ(features.size(), 1u);
+
     test.map.setZoom(test.map.getMaxZoom());
     test.checkRendering("point_annotation");
+
+    features = test.map.queryRenderedFeatures(screenBox);
+    EXPECT_EQ(features.size(), 1u);
 }
 
 TEST(Annotations, LineAnnotation) {

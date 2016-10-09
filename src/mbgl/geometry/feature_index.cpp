@@ -112,6 +112,8 @@ void FeatureIndex::addFeature(
     auto geometryTileFeature = sourceLayer->getFeature(indexedFeature.index);
     assert(geometryTileFeature);
 
+    auto id = geometryTileFeature->getID();
+
     for (const auto& layerID : layerIDs) {
         if (filterLayerIDs && !vectorContains(*filterLayerIDs, layerID)) {
             continue;
@@ -124,7 +126,14 @@ void FeatureIndex::addFeature(
             continue;
         }
 
-        result[layerID].push_back(convertFeature(*geometryTileFeature, tileID));
+        // Skip duplicated IDs on tile edges.
+        auto& features = result[layerID];
+        auto equalID = [&](const Feature& feature) { return id == feature.id; };
+        if (std::find_if(features.begin(), features.end(), equalID) != features.end()) {
+            continue;
+        }
+
+        features.push_back(convertFeature(*geometryTileFeature, tileID));
     }
 }
 
