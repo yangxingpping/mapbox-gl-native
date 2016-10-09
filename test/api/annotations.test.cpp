@@ -43,9 +43,8 @@ TEST(Annotations, SymbolAnnotation) {
     test.map.addAnnotation(SymbolAnnotation { Point<double>(0, 0), "default_marker" });
     test.checkRendering("point_annotation");
 
-    // FIXME: https://github.com/mapbox/mapbox-gl-native/issues/5419
-    //test.map.setZoom(test.map.getMaxZoom());
-    //test.checkRendering("point_annotation");
+    test.map.setZoom(test.map.getMaxZoom());
+    test.checkRendering("point_annotation");
 }
 
 TEST(Annotations, LineAnnotation) {
